@@ -3,79 +3,84 @@ graph TB
         ISP(("ISP 光猫"))
     end
 
-    subgraph FW["🔴 H3C F1000-T200 防火墙"]
-        GE1["GE1/0/1 WAN 桥接"]
-        GE2["GE1/0/2 LAN 桥接"]
-        GE3["GE1/0/3 DMZ 10.0.2.0/24"]
-        GE4["GE1/0/4 监控 10.0.3.0/24"]
-        GE5["GE1/0/5 IoT 10.0.4.0/24"]
-        MGMT["管理 IP: 192.168.100.254"]
-        FW_R["路由: 192.168.1.0/24 → 192.168.100.1"]
+    subgraph FW["🔴 H3C F1000-T200 防火墙 (PPPoE 拨号)"]
+        GE1["GE1/0/1 WAN PPPoE"]
+        GE2["GE1/0/2 Transit VLAN 99<br/>10.0.99.1/30"]
+        GE3["GE1/0/3 VLAN 10 路由器<br/>192.168.100.254/24"]
+        GE4["GE1/0/4 VLAN 20 DMZ<br/>10.0.2.254/24"]
+        GE5["GE1/0/5 VLAN 30 监控<br/>10.0.3.254/24"]
+        GE6["GE1/0/6 VLAN 40 IoT<br/>10.0.4.254/24"]
+        FW_R["路由: 各 VLAN 默认网关 → 软路由"]
     end
 
-    subgraph SR["🟢 软路由 192.168.100.1"]
-        ETH3("ETH3"):::port
-        ETH0("ETH0"):::port
-        ETH1("ETH1<br/>🟡 闲置"):::port_idle
-        ETH2("ETH2<br/>🟡 闲置"):::port_idle
-        SR_WAN["WAN ← 从ISP获取IP"]
-        SR_LAN["LAN: 192.168.100.1"]
-        SR_R["路由: 10.0.2/10.0.3/10.0.4 → 192.168.100.254"]
+    subgraph SR["🟢 软路由 ( OpenWRT )"]
+        ETH3("ETH3 WAN"):::port
+        ETH0("ETH0 Trunk"):::port
+        ETH1("ETH1<br/>🟡 空"):::port_idle
+        ETH2("ETH2<br/>🟡 空"):::port_idle
+        SR_WAN["WAN 10.0.99.2/30"]
+        SUB10["eth0.10: 192.168.100.1/24"]
+        SUB20["eth0.20: 10.0.2.1/24"]
+        SUB30["eth0.30: 10.0.3.1/24"]
+        SUB40["eth0.40: 10.0.4.1/24"]
+        SR_NAT["NAT + 代理转发"]
     end
 
-    subgraph R2["🔵 H3C GR-5400AX 路由器"]
-        R2_WAN["WAN: 192.168.100.2"]
-        R2_LAN["LAN: 192.168.1.1"]
-        R2_R["路由: 10.0.2/10.0.3/10.0.4 → 192.168.100.1"]
+    subgraph SW["SKS7300-8GPY4XGS 网管交换机"]
+        P_TRUNK["Trunk 口 → 软路由 ETH0"]
+        P10["VLAN 10 Access"]
+        P20["VLAN 20 Access"]
+        P30["VLAN 30 Access"]
+        P40["VLAN 40 Access"]
     end
 
-    subgraph LAN["📡 内网 192.168.1.0/24"]
-        SW["SKS7300-8GPY4XGS<br/>192.168.1.12"]
-        PC["💻 电脑 192.168.1.5<br/>网关: 192.168.1.1"]
-        OTHER["📱 其他设备<br/>网关: 192.168.1.1"]
+    subgraph VLAN10["VLAN 10 路由器 192.168.100.0/24<br/>网关: 192.168.100.1"]
+        R2["H3C GR-5400AX<br/>WAN: 192.168.100.2"]
+        R2_LAN["LAN: 192.168.1.1 → 内网设备"]
+        PC["电脑 192.168.1.5"]
     end
 
-    subgraph DMZ["🖥️ DMZ 10.0.2.0/24"]
-        DMZ_SW["DMZ 交换机"]
-        R730xd["Dell R730xd ESXi<br/>10.0.2.252 / 网关: 10.0.2.1"]
-        VM["虚拟机 10.0.2.11<br/>网关: 10.0.2.1"]
+    subgraph VLAN20["VLAN 20 DMZ 10.0.2.0/24<br/>网关: 10.0.2.1"]
+        R730xd["Dell R730xd ESXi<br/>10.0.2.252"]
+        VM["虚拟机 10.0.2.11"]
     end
 
-    subgraph SUR["📹 监控 10.0.3.0/24"]
-        SUR_SW["监控交换机"]
-        NVR["NVR 录像机<br/>10.0.3.6 / 网关: 10.0.3.1"]
-        CAM["摄像头 1<br/>10.0.3.8 / 网关: 10.0.3.1"]
+    subgraph VLAN30["VLAN 30 监控 10.0.3.0/24<br/>网关: 10.0.3.1"]
+        NVR["NVR 录像机<br/>10.0.3.6"]
+        CAM["摄像头<br/>10.0.3.8"]
     end
 
-    subgraph IOT["📶 IoT 10.0.4.0/24"]
-        IOT_SW["IoT 交换机"]
-        IOT_DEV["物联网设备<br/>10.0.4.2 / 网关: 10.0.4.1"]
+    subgraph VLAN40["VLAN 40 IoT 10.0.4.0/24<br/>网关: 10.0.4.1"]
+        IOT_DEV["物联网设备<br/>10.0.4.2"]
     end
 
-    ISP -->|"WAN"| GE1
-    GE2 -->|"透明桥接"| ETH3
-    ETH0 -->|"LAN 192.168.100.0/24"| R2_WAN
-    R2_LAN -->|"192.168.1.0/24"| SW
-    SW --- PC
-    SW --- OTHER
-    GE3 --> DMZ_SW
-    DMZ_SW --- R730xd
+    ISP -->|"光猫"| GE1
+    GE2 -->|"Transit 10.0.99.0/30"| ETH3
+    GE3 -->|"VLAN 10"| P10
+    GE4 -->|"VLAN 20"| P20
+    GE5 -->|"VLAN 30"| P30
+    GE6 -->|"VLAN 40"| P40
+    P_TRUNK --> ETH0
+
+    SUB10 === P10
+    P10 --- R2
+    R2 --- R2_LAN
+    R2_LAN --- PC
+    SUB20 === P20
+    P20 --- R730xd
     R730xd --- VM
-    GE4 --> SUR_SW
-    SUR_SW --- NVR
-    SUR_SW --- CAM
-    GE5 --> IOT_SW
-    IOT_SW --- IOT_DEV
+    SUB30 === P30
+    P30 --- NVR
+    P30 --- CAM
+    SUB40 === P40
+    P40 --- IOT_DEV
 
     subgraph ROUTES["📋 静态路由表"]
-        SR1["软路由: 10.0.2.0/24 → 192.168.100.254"]
-        SR2["软路由: 10.0.3.0/24 → 192.168.100.254"]
-        SR3["软路由: 10.0.4.0/24 → 192.168.100.254"]
-        R1["路由器: 10.0.2.0/24 → 192.168.100.1"]
-        R2["路由器: 10.0.3.0/24 → 192.168.100.1"]
-        R3["路由器: 10.0.4.0/24 → 192.168.100.1"]
-        H1["H3C: 192.168.1.0/24 → 192.168.100.1"]
-        H2["H3C: 10.0.3/10.0.4 NAT → ISP"]
+        F1["H3C: 10.0.99.0/30 → 直连"]
+        F2["H3C: 0.0.0.0/0 → ISP (PPPoE)"]
+        F3["H3C: 各 VLAN 默认路由 → 对应软路由子接口"]
+        S1["软路由: 0.0.0.0/0 → 10.0.99.1 (H3C)"]
+        S2["软路由: VLAN 间路由 → 直连子接口"]
     end
 
     classDef port fill:#90EE90,stroke:#333,stroke-width:2
