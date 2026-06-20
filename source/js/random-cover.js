@@ -208,6 +208,22 @@
     // 右下
     ctx.beginPath(); ctx.moveTo(width - d, height); ctx.lineTo(width - d, height - d); ctx.lineTo(width, height - d); ctx.stroke();
 
+    // ========== 13. 山脉/波形底部 ==========
+    ctx.fillStyle = 'rgba(255,255,255,0.03)';
+    ctx.beginPath(); ctx.moveTo(0, height);
+    for (var mx = 0; mx <= width; mx += 3) {
+      ctx.lineTo(mx, height - 30 - Math.sin(mx * 0.005) * 25 - Math.sin(mx * 0.012) * 15 - Math.sin(mx * 0.025) * 8);
+    }
+    ctx.lineTo(width, height); ctx.closePath(); ctx.fill();
+
+    // ========== 14. 第二层山脉 ==========
+    ctx.fillStyle = 'rgba(255,255,255,0.02)';
+    ctx.beginPath(); ctx.moveTo(0, height);
+    for (var mx2 = 0; mx2 <= width; mx2 += 3) {
+      ctx.lineTo(mx2, height - 50 - Math.sin(mx2 * 0.008 + 1) * 30 - Math.sin(mx2 * 0.018) * 12);
+    }
+    ctx.lineTo(width, height); ctx.closePath(); ctx.fill();
+
     return canvas.toDataURL();
   }
 
