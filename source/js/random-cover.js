@@ -89,14 +89,18 @@
   }
 
   function applyCover(img, images) {
-    if (!images || images.length === 0) return;
-    var chosen = pickRandom(images);
-    if (!chosen) return;
+    var chosen = FALLBACK;
+    if (images && images.length > 0) {
+      var picked = pickRandom(images);
+      if (picked) chosen = picked;
+    }
 
     img.setAttribute('src', chosen);
     img.setAttribute('srcset', '');
     img.style.objectFit = 'cover';
-    img.setAttribute('onerror', "this.onerror=null;this.src='" + FALLBACK + "';this.style.objectFit='contain'");
+    if (chosen !== FALLBACK) {
+      img.setAttribute('onerror', "this.onerror=null;this.src='" + FALLBACK + "';this.style.objectFit='contain'");
+    }
   }
 
   // 加载执行
