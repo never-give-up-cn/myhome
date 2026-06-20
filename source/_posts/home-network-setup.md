@@ -8,6 +8,12 @@ tags:
   - 拓扑
 categories:
   - 技术笔记
+photos:
+  - /img/server-rack.jpg
+  - /img/topo-before.png
+  - /img/topo-full.png
+  - /img/physical-cabling.png
+  - /img/esxi-network.png
 ---
 
 家里有一台软路由、一台普通路由器、一台交换机和一台跑 ESXi 的 R730xd，要让他们互相通信，静态路由是必须要配的。这篇文章记录我的网络拓扑和路由配置。
