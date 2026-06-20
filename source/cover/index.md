@@ -5,18 +5,8 @@ comments: false
 ---
 
 <div class="cover-page">
+  <div class="cover-bg"></div>
   <div class="cover-overlay"></div>
-  <div class="cover-grid">
-    <div class="grid-item item-1"><img src="/img/photos/IMG_4924.jpg" alt="摄影"></div>
-    <div class="grid-item item-2"><img src="/img/photos/IMG_4933.jpg" alt="摄影"></div>
-    <div class="grid-item item-3"><img src="/img/photos/IMG_4946.jpg" alt="摄影"></div>
-    <div class="grid-item item-4"><img src="/img/photos/IMG_4950.jpg" alt="摄影"></div>
-    <div class="grid-item item-5"><img src="/img/photos/IMG_4956.jpg" alt="摄影"></div>
-    <div class="grid-item item-6"><img src="/img/photos/P1010022.JPG" alt="摄影"></div>
-    <div class="grid-item item-7"><img src="/img/photos/P1010032.JPG" alt="摄影"></div>
-    <div class="grid-item item-8"><img src="/img/photos/IMG_20181201_103517.jpg" alt="摄影"></div>
-    <div class="grid-item item-9"><img src="/img/photos/IMG_20181201_182443.jpg" alt="摄影"></div>
-  </div>
   <div class="cover-content">
     <div class="cover-title">
       <span class="title-line title-sub">用镜头记录时光</span>
@@ -28,7 +18,7 @@ comments: false
 </div>
 
 <style>
-/* Reset page padding for full-screen cover - :has at the post level */
+/* Reset page for full-screen cover */
 .nexmoe-post:has(.cover-page) {
   margin: 0 !important;
   padding: 0 !important;
@@ -54,41 +44,35 @@ comments: false
 }
 
 /* Full-screen cover */
-
-/* 9-grid background */
-.cover-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
+.cover-page {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100vh;
-  gap: 2px;
-  background: #000;
-}
-.grid-item {
   overflow: hidden;
-  position: relative;
-}
-.grid-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s ease, filter 0.6s ease;
-  filter: brightness(0.6);
-}
-.grid-item:hover img {
-  transform: scale(1.1);
-  filter: brightness(0.85);
+  z-index: 100;
 }
 
-/* Dark overlay to ensure text readability */
+/* Single full-screen background image */
+.cover-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url(/img/cover.jpg) center center / cover no-repeat;
+  z-index: 1;
+}
+
+/* Dark overlay for text readability */
 .cover-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0,0,0,0.4);
   z-index: 2;
   pointer-events: none;
 }
@@ -172,8 +156,3 @@ comments: false
   }
 }
 </style>
-
-<script>
-// Auto-redirect after splash timeout (optional - remove if you want manual navigation)
-// setTimeout(() => { window.location.href = '/'; }, 5000);
-</script>

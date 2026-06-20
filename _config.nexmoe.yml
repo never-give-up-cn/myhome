@@ -6,7 +6,7 @@ avatar: /img/avatar.jpg
 
 # Background (also used as default article header)
 background:
-  path: /img/photos/IMG_4964.jpg
+  path: /img/cover.jpg
   width: 1920
   height: 1080
 
