@@ -46,6 +46,13 @@ graph TB
     P8 --- PC["💻 电脑<br/>192.168.1.5"]
     R2 --- WIFI
 
+    subgraph RT["📋 静态路由表"]
+        SR_R1["软路由: 0.0.0.0/0 → ISP (PPPoE)"]
+        SR_R2["软路由: 192.168.1.0/24 → 192.168.100.2"]
+        R2_R1["路由器: 0.0.0.0/0 → 192.168.100.1"]
+        R2_R2["路由器: 192.168.1.0/24 → 直连"]
+    end
+
     classDef wan fill:#FFDDDD,stroke:#333
     classDef lan fill:#DDFFDD,stroke:#333
     classDef idle fill:#FFE4B5,stroke:#999,stroke-dasharray: 5 5
