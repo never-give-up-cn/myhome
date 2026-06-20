@@ -238,6 +238,11 @@ activate_power_mode:
 # 页面进入过渡动画
 enter_transitions: true
 
+# Inject 自定义 JS
+inject:
+  bottom:
+    - <script src="/js/random-cover.js"></script>
+
 # 页面顶部加载动画进度条
 pace:
   enable: true

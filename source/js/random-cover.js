@@ -28,7 +28,10 @@
   }
 
   function randomizeCovers() {
-    var cards = document.querySelectorAll('.index-card .index-img img');
+    var cards = document.querySelectorAll('.post_cover .post-bg[src]');
+    if (!cards.length) {
+      cards = document.querySelectorAll('.index-card .index-img img');
+    }
     if (!cards.length) return;
     var shuffled = shuffle(coverPool.slice());
     for (var i = 0; i < cards.length; i++) {
