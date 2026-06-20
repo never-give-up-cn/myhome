@@ -10,11 +10,15 @@ categories:
   - 器材评测
 ---
 
+{% img /img/photos/dji-pocket-4p.jpg '"DJI Osmo Pocket 4P" "DJI口袋相机"' %}
+
 2026 年的口袋相机市场，有两台机器你绕不开——**DJI Osmo Pocket 4P** 和 **Insta360 Luna Ultra**。
 
 两台都是双主摄、都是一英寸起步、都带云台。但如果你以为它们差不多，那就错了。
 
 **它们是完全不同的两台机器，适合完全不同的人。**
+
+{% img /img/photos/insta360-luna-ultra.jpg '"Insta360 Luna Ultra" "Insta360云台相机"' %}
 
 我今天不带立场，把两台机器拆开来讲清楚。
 
