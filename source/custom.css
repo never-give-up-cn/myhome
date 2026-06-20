@@ -1,5 +1,12 @@
 /* Nexmoe Photography Custom Styles */
 
+/* Global background - use cover image for all pages (clear, no blur) */
+#nexmoe-background .nexmoe-bg {
+  opacity: 0.7 !important;
+  filter: blur(0px) !important;
+  background-size: cover !important;
+}
+
 /* Sticky post badge */
 .article-list .article-item:first-child .article-title::after {
   content: " 📌 置顶";
