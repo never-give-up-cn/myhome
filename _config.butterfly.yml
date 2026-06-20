@@ -9,6 +9,7 @@ nav:
 
 menu:
   首页: / || fas fa-home
+  作品集: /photos/ || fas fa-images
   归档: /archives/ || fas fa-archive
   分类: /categories/ || fas fa-folder-open
   标签: /tags/ || fas fa-tags
