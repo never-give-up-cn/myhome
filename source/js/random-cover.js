@@ -88,6 +88,20 @@
   }
 
   // 色彩方案
+  // 行业图标池（文章无图时随机使用）
+  var iconPool = [
+    '/img/icons/photography.svg',
+    '/img/icons/network.svg',
+    '/img/icons/server.svg',
+    '/img/icons/switch.svg',
+    '/img/icons/virtualization.svg',
+    '/img/icons/iot.svg',
+    '/img/icons/computer.svg',
+    '/img/icons/security.svg',
+    '/img/icons/wifi.svg',
+    '/img/icons/surveillance.svg'
+  ];
+
   var themeColors = [
     ['#667eea', '#764ba2'], ['#f093fb', '#f5576c'],
     ['#4facfe', '#00f2fe'], ['#43e97b', '#38f9d7'],
@@ -236,17 +250,25 @@
         img.style.objectFit = 'cover';
         img.onerror = function() {
           img.onerror = null;
-          img.setAttribute('src', generateArtImage(800, 600));
-          img.style.objectFit = 'cover';
+          img.onerror = null;
+          var iconSrc = pickRandom(iconPool) || '/img/icons/photography.svg';
+          img.setAttribute('src', iconSrc);
+          img.style.objectFit = 'contain';
+          img.style.padding = '30px';
+          img.style.background = 'linear-gradient(135deg, var(--color-bg1, #667eea), var(--color-bg2, #764ba2))';
         };
         return;
       }
     }
 
-    // 没找到图片 → 生成渐变艺术图
-    img.setAttribute('src', generateArtImage(800, 600));
+    // 没找到图片 → 随机使用行业图标
+    var iconSrc = pickRandom(iconPool) || '/img/icons/photography.svg';
+    img.setAttribute('src', iconSrc);
     img.setAttribute('srcset', '');
-    img.style.objectFit = 'cover';
+    img.style.objectFit = 'contain';
+    img.style.padding = '30px';
+    img.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+    img.style.boxSizing = 'border-box';
   }
 
   // 加载执行
