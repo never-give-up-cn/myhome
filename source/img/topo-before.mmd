@@ -13,8 +13,10 @@ graph TB
     end
 
     subgraph R2["🔵 路由器"]
-        R2_WAN["WAN1<br/>192.168.100.2"]
-        R2_LAN["LAN1<br/>192.168.1.1"]
+        R2_WAN1["WAN1<br/>192.168.100.2"]
+        R2_LAN1["LAN1<br/>192.168.1.1"]
+        R2_LAN2["LAN2/WAN3<br/>🟡 空"]:::idle
+        R2_LAN3["LAN3/WAN2<br/>🟡 空"]:::idle
         WIFI["Wi-Fi<br/>摄像头<br/>192.168.1.8"]
     end
 
@@ -35,8 +37,8 @@ graph TB
     end
 
     ISP -->|"光猫"| ETH3
-    ETH0 -->|"192.168.100.0/24"| R2_WAN
-    R2_LAN -->|"192.168.1.0/24"| P1
+    ETH0 -->|"192.168.100.0/24"| R2_WAN1
+    R2_LAN1 -->|"192.168.1.0/24"| P1
     P2 --- NVR["NVR<br/>192.168.1.6"]
     P3 --- IDRAC
     P4 --- IOT["小米IoT中枢<br/>192.168.1.2"]
