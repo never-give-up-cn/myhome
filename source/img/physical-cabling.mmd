@@ -1,0 +1,61 @@
+graph TB
+    subgraph RACK["🗄️ 机柜物理走线"]
+        subgraph ISP_SECTION["ISP"]
+            ONT["光猫"]
+        end
+
+        subgraph FW_SECTION["🔴 H3C F1000-T200 防火墙"]
+            FW_P1["GE1/0/1 WAN ⬤ 红"]
+            FW_P2["GE1/0/2 VLAN1 ⬤ 蓝"]
+            FW_P3["GE1/0/3 VLAN2 ⬤ 蓝"]
+            FW_P4["GE1/0/4~7 Trunk ⬤ 黄"]
+        end
+
+        subgraph SR_SECTION["🟢 软路由"]
+            SR_ETH3["ETH3 (WAN)"]
+            SR_ETH0["ETH0 (LAN)"]
+            SR_ETH1["ETH1 闲置"]
+            SR_ETH2["ETH2 闲置"]
+        end
+
+        subgraph SW_SECTION["🔀 SKS7300 交换机"]
+            SW_TRUNK["Trunk 口 1-4<br/>(接防火墙)"]
+            SW_ACC1["Access 口 5<br/>VLAN 10 路由器"]
+            SW_ACC2["Access 口 6<br/>VLAN 20 DMZ"]
+            SW_ACC3["Access 口 7<br/>VLAN 30 NVR"]
+            SW_ACC4["Access 口 8<br/>VLAN 40 IoT"]
+            SW_ACC5["Access 口 9<br/>VLAN 10 电脑"]
+            SW_SPARE["口 10-12 备用"]
+        end
+
+        subgraph DEV_SECTION["📡 设备"]
+            ROUTER["H3C GR-5400AX<br/>WAN ← 口5"]
+            R730XD["R730xd ESXi<br/>管理口 ← 口6"]
+            NVR["NVR 录像机<br/>← 口7"]
+            IOT["小米IoT中枢<br/>← 口8"]
+            PC["电脑<br/>← 口9"]
+        end
+    end
+
+    ONT -->|"⬤ 红 网线"| FW_P1
+    FW_P2 -->|"⬤ 蓝"| SR_ETH3
+    FW_P3 -->|"⬤ 蓝"| SR_ETH0
+    FW_P4 -->|"⬤ 黄 Trunk"| SW_TRUNK
+    SW_ACC1 -->|"⬤ 绿"| ROUTER
+    SW_ACC2 -->|"⬤ 绿"| R730XD
+    SW_ACC3 -->|"⬤ 绿"| NVR
+    SW_ACC4 -->|"⬤ 绿"| IOT
+    SW_ACC5 -->|"⬤ 绿"| PC
+
+    classDef isp fill:#FFE4E1,stroke:#333
+    classDef fw fill:#FFCCCC,stroke:#333
+    classDef sr fill:#CCFFCC,stroke:#333
+    classDef sw fill:#FFFFCC,stroke:#333
+    classDef dev fill:#E8E8FF,stroke:#333
+    classDef idle fill:#F5F5F5,stroke:#999,stroke-dasharray:5 5
+
+    class ONT isp
+    class FW_P1,FW_P2,FW_P3,FW_P4 fw
+    class SR_ETH3,SR_ETH0,SR_ETH1,SR_ETH2 sr
+    class SW_TRUNK,SW_ACC1,SW_ACC2,SW_ACC3,SW_ACC4,SW_ACC5,SW_SPARE sw
+    class ROUTER,R730XD,NVR,IOT,PC dev
