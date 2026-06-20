@@ -1,6 +1,7 @@
 ---
 title: DJI Pocket 4P vs Insta360 Luna Ultra，我选哪个？
 date: 2026-06-20
+sticky: 2
 tags:
   - 器材
   - 相机
