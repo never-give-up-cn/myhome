@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <rect width="200" height="200" rx="20" fill="#2c3e50" opacity="0.1"/>
+  <g transform="translate(100,100)">
+    <circle cx="0" cy="-5" r="18" stroke="#2c3e50" stroke-width="2.5" fill="none"/>
+    <path d="M-25,15 Q-25,35 0,35 Q25,35 25,15" stroke="#2c3e50" stroke-width="2" fill="none"/>
+    <path d="M-18,10 Q-18,28 0,28 Q18,28 18,10" stroke="#2c3e50" stroke-width="1.5" fill="none" opacity="0.5"/>
+    <!-- 眼睛 -->
+    <circle cx="-5" cy="-8" r="3" fill="#2c3e50" opacity="0.2"/>
+    <circle cx="5" cy="-8" r="3" fill="#2c3e50" opacity="0.2"/>
+    <!-- 嘴巴 -->
+    <path d="M-4,2 Q0,6 4,2" stroke="#2c3e50" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.3"/>
+  </g>
+</svg>
