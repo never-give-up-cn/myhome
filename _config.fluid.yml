@@ -1,0 +1,154 @@
+#---------------------------
+# Fluid Theme Config - 摄影版
+#---------------------------
+
+# 导航栏
+navbar:
+  blog_title: "CYH · 摄影笔记"
+  ground_glass:
+    enable: true
+    px: 3
+    alpha: 0.85
+  menu:
+    - { key: "home", link: "/", icon: "iconfont icon-home-fill" }
+    - { key: "archive", link: "/archives/", icon: "iconfont icon-archive-fill" }
+    - { key: "category", link: "/categories/", icon: "iconfont icon-category-fill" }
+    - { key: "tag", link: "/tags/", icon: "iconfont icon-tags-fill" }
+    - { key: "about", link: "/about/", icon: "iconfont icon-user-fill" }
+
+# 搜索
+search:
+  enable: true
+  path: /search.xml
+  field: all
+  content: true
+
+# 首页
+index:
+  banner_img: /img/cover.jpg
+  banner_img_height: 100
+  banner_mask_alpha: 0.3
+  slogan:
+    enable: true
+    text:
+      - 用镜头记录世界的每一个瞬间
+      - 追逐光影，定格美好
+      - 山河远阔，人间烟火
+  auto_excerpt:
+    enable: true
+  post_meta:
+    date: true
+    category: true
+    tag: true
+  post_sticky:
+    enable: true
+    icon: "iconfont icon-top"
+
+# 文章页
+post:
+  banner_img: /img/cover.jpg
+  banner_img_height: 70
+  banner_mask_alpha: 0.3
+  default_index_img: /img/cover.jpg
+  meta:
+    author:
+      enable: false
+    date:
+      enable: true
+      format: "LL a"
+    wordcount:
+      enable: true
+    min2read:
+      enable: true
+    views:
+      enable: false
+
+# 归档页
+archive:
+  banner_img: /img/cover.jpg
+  banner_img_height: 60
+  banner_mask_alpha: 0.3
+
+# 分类页
+category:
+  banner_img: /img/cover.jpg
+  banner_img_height: 60
+  banner_mask_alpha: 0.3
+
+# 标签页
+tag:
+  banner_img: /img/cover.jpg
+  banner_img_height: 60
+  banner_mask_alpha: 0.3
+
+# 关于页
+about:
+  banner_img: /img/cover.jpg
+  banner_img_height: 60
+  banner_mask_alpha: 0.3
+
+# 标签云页面
+tag_cloud:
+  enable: true
+  placeholder: "搜索标签..."
+  max_tags: 40
+
+# 社交链接
+social:
+  - { icon: "iconfont icon-camera-fill", link: "https://500px.com/your-username", color: "#00ade6" }
+  - { icon: "iconfont icon-instagram-fill", link: "https://instagram.com/your-username", color: "#e4405f" }
+  - { icon: "iconfont icon-github-fill", link: "https://github.com/never-give-up-cn", color: "#24292e" }
+  - { icon: "iconfont icon-mail-fill", link: "mailto:your-email@example.com", color: "#4a7dbe" }
+
+# 页脚
+footer:
+  content: '
+    <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+    <i class="iconfont icon-love"></i>
+    <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    <span> · 📷 用镜头定格时光</span>
+  '
+  statistics:
+    enable: false
+
+# 暗色模式
+dark_mode:
+  enable: true
+  default: auto
+
+# 代码高亮
+code:
+  copy_btn: true
+  highlight:
+    enable: true
+    lib: "highlightjs"
+
+# 打字机效果
+fun_features:
+  typing:
+    enable: true
+    typeSpeed: 70
+    cursorChar: "📷"
+    loop: true
+    scope: [home]
+  anchorjs:
+    enable: true
+  progressbar:
+    enable: true
+
+# 图片懒加载
+lazyload:
+  enable: true
+  loading_img: /img/cover.jpg
+  onlypost: false
+  offset_factor: 2
+
+# 全局颜色微调
+color:
+  body_bg_color: "#f5f5f5"
+  navbar_bg_color: "rgba(47,65,84,0.92)"
+  board_color: "#fff"
+
+# 自定义 CSS
+custom_css:
+  - /css/custom.css
