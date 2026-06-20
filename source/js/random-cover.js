@@ -87,14 +87,16 @@
     });
   }
 
-  // 色彩方案 - 不同分类对应不同渐变
+  // 色彩方案
   var themeColors = [
     ['#667eea', '#764ba2'], ['#f093fb', '#f5576c'],
     ['#4facfe', '#00f2fe'], ['#43e97b', '#38f9d7'],
     ['#fa709a', '#fee140'], ['#a18cd1', '#fbc2eb'],
-    ['#fccb90', '#d57eeb'], ['#e0c3fc', '#8ec5fc'],
-    ['#0c3483', '#a2b6df'], ['#fc5c7d', '#6a82fb'],
-    ['#2b5876', '#4e4376'], ['#c0392b', '#8e44ad']
+    ['#fccb90', '#d57eeb'], ['#0c3483', '#a2b6df'],
+    ['#fc5c7d', '#6a82fb'], ['#2b5876', '#4e4376'],
+    ['#11998e', '#38ef7d'], ['#fc4a1a', '#f7b733'],
+    ['#00b4db', '#0083b0'], ['#b224ef', '#7579ff'],
+    ['#654ea3', '#eaafc8'], ['#ed213a', '#93291e']
   ];
 
   function generateArtImage(width, height) {
@@ -102,44 +104,109 @@
     canvas.width = width;
     canvas.height = height;
     var ctx = canvas.getContext('2d');
-
-    // 随机颜色组合
     var colors = themeColors[Math.floor(Math.random() * themeColors.length)];
 
-    // 渐变背景
-    var grad = ctx.createLinearGradient(0, 0, width, height);
+    // 1. 渐变主背景
+    var grad = ctx.createLinearGradient(0, 0, width * 0.7, height);
     grad.addColorStop(0, colors[0]);
-    grad.addColorStop(0.5, colors[1]);
+    grad.addColorStop(0.6, colors[1]);
     grad.addColorStop(1, colors[0]);
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, width, height);
 
-    // 装饰圆
-    for (var i = 0; i < 5; i++) {
-      var x = Math.random() * width;
-      var y = Math.random() * height;
-      var r = 30 + Math.random() * 120;
-      var c = ctx.createRadialGradient(x, y, 0, x, y, r);
-      c.addColorStop(0, 'rgba(255,255,255,0.15)');
+    // 2. 大装饰圆（柔光晕）
+    var spots = [
+      [width * 0.8, height * 0.2, 200],
+      [width * 0.2, height * 0.8, 160],
+      [width * 0.5, height * 0.5, 100],
+      [width * 0.9, height * 0.7, 140],
+      [width * 0.1, height * 0.3, 120]
+    ];
+    for (var s = 0; s < spots.length; s++) {
+      var sp = spots[s];
+      var c = ctx.createRadialGradient(sp[0], sp[1], 0, sp[0], sp[1], sp[2]);
+      c.addColorStop(0, 'rgba(255,255,255,0.12)');
       c.addColorStop(1, 'rgba(255,255,255,0)');
       ctx.fillStyle = c;
       ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.arc(sp[0], sp[1], sp[2], 0, Math.PI * 2);
       ctx.fill();
     }
 
-    // 相机图标（中心偏上）
-    ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-    ctx.lineWidth = 2.5;
-    var cx = width / 2, cy = height * 0.42;
-    ctx.strokeRect(cx - 24, cy - 16, 48, 32);
+    // 3. 网格线条装饰
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 1;
+    for (var gx = 0; gx < width; gx += 40) {
+      ctx.beginPath();
+      ctx.moveTo(gx, 0);
+      ctx.lineTo(gx + 30, height);
+      ctx.stroke();
+    }
+    for (var gy = 0; gy < height; gy += 40) {
+      ctx.beginPath();
+      ctx.moveTo(0, gy);
+      ctx.lineTo(width, gy + 20);
+      ctx.stroke();
+    }
+
+    // 4. 随机三角形
+    ctx.fillStyle = 'rgba(255,255,255,0.06)';
+    for (var t = 0; t < 6; t++) {
+      var tx = Math.random() * width;
+      var ty = Math.random() * height;
+      ctx.beginPath();
+      ctx.moveTo(tx, ty);
+      ctx.lineTo(tx + 30 + Math.random() * 60, ty - 20 - Math.random() * 40);
+      ctx.lineTo(tx - 20 - Math.random() * 40, ty + 20 + Math.random() * 40);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // 5. 相机图标（中心偏上）
+    var cx = width / 2, cy = height * 0.38;
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = 3;
+    // 机身
+    ctx.strokeRect(cx - 28, cy - 18, 56, 36);
+    // 顶部闪光
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.fillRect(cx + 18, cy - 22, 8, 6);
+    // 镜头
     ctx.beginPath();
-    ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+    ctx.arc(cx, cy, 14, 0, Math.PI * 2);
     ctx.stroke();
-    ctx.fillStyle = 'rgba(255,255,255,0.2)';
     ctx.beginPath();
-    ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+    ctx.arc(cx, cy, 10, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.12)';
     ctx.fill();
+    // 内圈
+    ctx.beginPath();
+    ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    // 镜头光晕
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    ctx.beginPath();
+    ctx.ellipse(cx - 4, cy - 4, 3, 2, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 6. 底部文字区域
+    ctx.fillStyle = 'rgba(255,255,255,0.08)';
+    ctx.fillRect(width * 0.15, height * 0.78, width * 0.7, 2);
+
+    // 7. 四角装饰
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 2;
+    var d = 30;
+    // 左上
+    ctx.beginPath(); ctx.moveTo(d, 0); ctx.lineTo(d, d); ctx.lineTo(0, d); ctx.stroke();
+    // 右上
+    ctx.beginPath(); ctx.moveTo(width - d, 0); ctx.lineTo(width - d, d); ctx.lineTo(width, d); ctx.stroke();
+    // 左下
+    ctx.beginPath(); ctx.moveTo(d, height); ctx.lineTo(d, height - d); ctx.lineTo(0, height - d); ctx.stroke();
+    // 右下
+    ctx.beginPath(); ctx.moveTo(width - d, height); ctx.lineTo(width - d, height - d); ctx.lineTo(width, height - d); ctx.stroke();
 
     return canvas.toDataURL();
   }
