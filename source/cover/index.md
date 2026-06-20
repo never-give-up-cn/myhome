@@ -10,9 +10,9 @@ comments: false
   <div class="cover-overlay"></div>
   <div class="cover-content">
     <div class="cover-title">
-      <span class="title-line title-sub">用镜头记录时光</span>
+      <span class="title-line title-sub">用镜头记录时光 · 用网线连接世界</span>
       <span class="title-line title-main">摄影才是真爱</span>
-      <span class="title-line title-desc">光 · 影 · 瞬 · 间</span>
+      <span class="title-line title-desc">📷 摄影是热爱 · 🔧 网络是专业</span>
     </div>
     <a href="/" class="cover-btn">进入主页</a>
   </div>
