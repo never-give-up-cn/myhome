@@ -1,0 +1,126 @@
+# Nexmoe Theme Configuration
+# Docs: https://docs.nexmoe.com
+
+# Avatar
+avatar: /img/avatar.jpg
+
+# Background (also used as default article header)
+background:
+  path: /img/photos/IMG_4964.jpg
+  width: 1920
+  height: 1080
+
+# Favicon
+favicon:
+  href: /img/avatar.jpg
+  type: image/jpeg
+
+# Feature toggles
+function:
+  globalToc: true
+  wordCount: true
+  copyCode: true
+
+# Image CDN
+imageCDN:
+  enable: false
+
+# Custom styles
+customStyles:
+  - custom.css
+
+# Icon library
+iconlib:
+
+# Navigation Menu
+menu:
+  首页:
+    - /
+    - icon-home
+  作品集:
+    - /photos/
+    - icon-tuchong
+  文章归档:
+    - /archives/
+    - icon-container
+  关于我:
+    - /about/
+    - icon-info-circle
+
+# Sidebar Widgets
+widgets:
+  - name: search
+    enable: true
+    options:
+      search:
+        type: local
+        url:
+        id:
+
+  - name: social
+    enable: true
+    options:
+      social:
+        图虫:
+          - https://500px.com/your-username
+          - icon-tuchong
+          - rgb(0, 173, 230)
+          - rgba(0, 173, 230, .1)
+        Instagram:
+          - https://instagram.com/your-username
+          - icon-eye-fill
+          - rgb(228, 64, 95)
+          - rgba(228, 64, 95, .1)
+        GitHub:
+          - https://github.com/never-give-up-cn
+          - icon-github
+          - rgb(25, 23, 23)
+          - rgba(25, 23, 23, .1)
+        Email:
+          - mailto:your-email@example.com
+          - icon-mail-fill
+          - rgb(74, 125, 190)
+          - rgba(74, 125, 190, .1)
+        RSS:
+          - /atom.xml
+          - icon-rss
+          - rgb(247, 132, 34)
+          - rgba(247, 132, 34, .1)
+
+  - name: category
+    enable: true
+
+  - name: tagcloud
+    enable: true
+    options:
+      maxTagcloud: 20
+
+  - name: hitokoto
+    enable: false
+
+  - name: archive
+    enable: true
+    options:
+      widgetAchive:
+        archive_type: month
+        show_count: true
+
+  - name: recent_posts
+    enable: true
+
+# Copyright notice on copy
+copyTip: "著作权归作者所有。\n转载请注明出处。\n来源：%url"
+
+# Custom injection slots
+slotHead: |
+
+slotFooter: |
+
+slotSidebar: |
+
+slotComment: |
+
+slotCopyright: |
+  <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+
+slotArticleEnd: |
