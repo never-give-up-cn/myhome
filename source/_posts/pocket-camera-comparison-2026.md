@@ -9,6 +9,9 @@ tags:
   - 观点
 categories:
   - 器材评测
+photos:
+  - /img/photos/dji-pocket-4p.jpg
+  - /img/photos/insta360-luna-ultra.jpg
 ---
 
 {% img /img/photos/dji-pocket-4p.jpg '"DJI Osmo Pocket 4P" "DJI口袋相机"' %}

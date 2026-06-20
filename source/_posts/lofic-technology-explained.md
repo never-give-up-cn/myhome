@@ -9,6 +9,8 @@ tags:
   - 科普
 categories:
   - 摄影教程
+photos:
+  - /img/photos/dji-pocket-4p.jpg
 ---
 
 DJI Pocket 4P 发布的时候，大部分人关注的是它的双摄像头、云台、4K/240fps。

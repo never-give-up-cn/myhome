@@ -7,6 +7,10 @@ tags:
   - 过程
 categories:
   - 摄影随笔
+photos:
+  - /img/posts/sunset.svg
+  - /img/photos/IMG_4950.jpg
+  - /img/photos/IMG_4955.jpg
 ---
 
 {% img /img/posts/sunset.svg '"追逐每一场日出日落" "日落摄影"' %}

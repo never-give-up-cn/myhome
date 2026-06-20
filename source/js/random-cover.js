@@ -1,8 +1,8 @@
-// 随机封面 - 每次刷新首页文章卡片显示不同的照片
+// 随机封面 - 优先使用文章自己的配图
 (function() {
   var FALLBACK = 'https://lf-flow-web-cdn.doubao.com/obj/flow-doubao/doubao/web/doubao_avatar.png';
 
-  var coverPool = [
+  var globalPool = [
     '/img/photos/IMG_4924.jpg',
     '/img/photos/IMG_4933.jpg',
     '/img/photos/IMG_4946.jpg',
@@ -23,6 +23,11 @@
     '/img/photos/insta360-luna-ultra.jpg'
   ];
 
+  function pickRandom(arr) {
+    if (!arr || arr.length === 0) return null;
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
   function shuffle(arr) {
     for (var i = arr.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1));
@@ -32,24 +37,37 @@
   }
 
   function randomizeCovers() {
-    // Try Butterfly selector first, fallback to Fluid selector
     var cards = document.querySelectorAll('.post_cover .post-bg[src]');
     if (!cards.length) {
       cards = document.querySelectorAll('.index-card .index-img img');
     }
     if (!cards.length) return;
 
-    var shuffled = shuffle(coverPool.slice());
-    for (var i = 0; i < cards.length; i++) {
-      var idx = i % shuffled.length;
-      var img = cards[i];
+    var shuffled = shuffle(globalPool.slice());
+    var globalIdx = 0;
 
-      // Set random cover
-      img.setAttribute('src', shuffled[idx]);
+    for (var i = 0; i < cards.length; i++) {
+      var img = cards[i];
+      var chosen = null;
+
+      // 优先：从文章的 data-photos 中随机选一张
+      var photosAttr = img.getAttribute('data-photos');
+      if (photosAttr && photosAttr !== '[]') {
+        try {
+          var articlePhotos = JSON.parse(photosAttr);
+          chosen = pickRandom(articlePhotos);
+        } catch(e) {}
+      }
+
+      // 备选：从全局照片池随机
+      if (!chosen) {
+        chosen = shuffled[globalIdx % shuffled.length];
+        globalIdx++;
+      }
+
+      img.setAttribute('src', chosen);
       img.setAttribute('srcset', '');
       img.style.objectFit = 'cover';
-
-      // Fallback if image fails to load
       img.setAttribute('onerror', "this.onerror=null;this.src='" + FALLBACK + "';this.style.objectFit='contain'");
     }
   }
@@ -65,10 +83,8 @@
   // 首次加载
   initRandomCover();
 
-  // PJAX 翻页后重新随机
+  // PJAX 翻页
   document.addEventListener('pjax:complete', randomizeCovers);
-
-  // Butterfly 主题的全局函数注册
   if (typeof btf !== 'undefined' && btf.addGlobalFn) {
     btf.addGlobalFn('pjaxComplete', randomizeCovers, 'randomCover');
   }
