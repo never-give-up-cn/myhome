@@ -12,6 +12,10 @@ graph TB
     end
 
     subgraph SR["🟢 软路由 192.168.100.1"]
+        ETH3("ETH3"):::port
+        ETH0("ETH0"):::port
+        ETH1("ETH1<br/>🟡 闲置"):::port_idle
+        ETH2("ETH2<br/>🟡 闲置"):::port_idle
         SR_WAN["WAN ← 从ISP获取IP"]
         SR_LAN["LAN: 192.168.100.1"]
         SR_R["路由: 10.0.2.0/24 → 192.168.100.254"]
@@ -36,8 +40,8 @@ graph TB
     end
 
     ISP -->|"WAN"| GE1
-    GE2 -->|"透明桥接"| SR_WAN
-    SR_LAN -->|"192.168.100.0/24"| R2_WAN
+    GE2 -->|"透明桥接"| ETH3
+    ETH0 -->|"LAN 192.168.100.0/24"| R2_WAN
     R2_LAN -->|"192.168.1.0/24"| SW
     SW --- PC
     SW --- OTHER
@@ -51,3 +55,6 @@ graph TB
         R3["H3C: 192.168.1.0/24 → 192.168.100.1"]
         R4["DMZ: 192.168.1.0/24 → 10.0.2.1"]
     end
+
+    classDef port fill:#90EE90,stroke:#333,stroke-width:2
+    classDef port_idle fill:#FFE4B5,stroke:#999,stroke-width:1,dashed
