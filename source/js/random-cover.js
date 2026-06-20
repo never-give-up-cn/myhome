@@ -1,5 +1,7 @@
 // 随机封面 - 每次刷新首页文章卡片显示不同的照片
 (function() {
+  var FALLBACK = 'https://lf-flow-web-cdn.doubao.com/obj/flow-doubao/doubao/web/doubao_avatar.png';
+
   var coverPool = [
     '/img/photos/IMG_4924.jpg',
     '/img/photos/IMG_4933.jpg',
@@ -16,7 +18,9 @@
     '/img/photos/IMG_20181202_104151.jpg',
     '/img/photos/IMG_20181213_094438.jpg',
     '/img/photos/IMG_20181214_075105.jpg',
-    '/img/photos/P1010064.JPG'
+    '/img/photos/P1010064.JPG',
+    '/img/photos/dji-pocket-4p.jpg',
+    '/img/photos/insta360-luna-ultra.jpg'
   ];
 
   function shuffle(arr) {
@@ -28,17 +32,25 @@
   }
 
   function randomizeCovers() {
+    // Try Butterfly selector first, fallback to Fluid selector
     var cards = document.querySelectorAll('.post_cover .post-bg[src]');
     if (!cards.length) {
       cards = document.querySelectorAll('.index-card .index-img img');
     }
     if (!cards.length) return;
+
     var shuffled = shuffle(coverPool.slice());
     for (var i = 0; i < cards.length; i++) {
       var idx = i % shuffled.length;
-      cards[i].setAttribute('src', shuffled[idx]);
-      cards[i].setAttribute('srcset', '');
-      cards[i].style.objectFit = 'cover';
+      var img = cards[i];
+
+      // Set random cover
+      img.setAttribute('src', shuffled[idx]);
+      img.setAttribute('srcset', '');
+      img.style.objectFit = 'cover';
+
+      // Fallback if image fails to load
+      img.setAttribute('onerror', "this.onerror=null;this.src='" + FALLBACK + "';this.style.objectFit='contain'");
     }
   }
 
