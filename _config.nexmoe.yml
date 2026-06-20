@@ -12,7 +12,7 @@ background:
 
 # Favicon
 favicon:
-  href: /img/avatar.jpg
+  href: /img/cover.jpg
   type: image/jpeg
 
 # Feature toggles
