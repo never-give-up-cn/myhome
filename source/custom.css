@@ -20,8 +20,8 @@ body {
   backdrop-filter: none !important;
 }
 
-/* Override old Butterfly theme cached header background */
-#body-wrap .full_page.fixed {
+/* Override old Butterfly theme cached header background - inline style needs !important */
+#page-header.full_page.fixed {
   background: url(/img/cover.jpg) center center / cover no-repeat !important;
 }
 
