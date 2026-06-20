@@ -233,11 +233,6 @@ activate_power_mode:
 # 页面进入过渡动画
 enter_transitions: true
 
-# 加载进度条
-preloader:
-  enable: true
-  source: 1
-
 # 页面顶部加载动画进度条
 pace:
   enable: true
