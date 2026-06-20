@@ -1,6 +1,5 @@
 // 随机封面 - 从每篇文章页面中获取随机图片
 (function() {
-  var FALLBACK = 'https://lf-flow-web-cdn.doubao.com/obj/flow-doubao/doubao/web/doubao_avatar.png';
   var cache = {};
   var processing = false;
 
@@ -88,19 +87,83 @@
     });
   }
 
-  function applyCover(img, images) {
-    var chosen = FALLBACK;
-    if (images && images.length > 0) {
-      var picked = pickRandom(images);
-      if (picked) chosen = picked;
+  // 色彩方案 - 不同分类对应不同渐变
+  var themeColors = [
+    ['#667eea', '#764ba2'], ['#f093fb', '#f5576c'],
+    ['#4facfe', '#00f2fe'], ['#43e97b', '#38f9d7'],
+    ['#fa709a', '#fee140'], ['#a18cd1', '#fbc2eb'],
+    ['#fccb90', '#d57eeb'], ['#e0c3fc', '#8ec5fc'],
+    ['#0c3483', '#a2b6df'], ['#fc5c7d', '#6a82fb'],
+    ['#2b5876', '#4e4376'], ['#c0392b', '#8e44ad']
+  ];
+
+  function generateArtImage(width, height) {
+    var canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    var ctx = canvas.getContext('2d');
+
+    // 随机颜色组合
+    var colors = themeColors[Math.floor(Math.random() * themeColors.length)];
+
+    // 渐变背景
+    var grad = ctx.createLinearGradient(0, 0, width, height);
+    grad.addColorStop(0, colors[0]);
+    grad.addColorStop(0.5, colors[1]);
+    grad.addColorStop(1, colors[0]);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, width, height);
+
+    // 装饰圆
+    for (var i = 0; i < 5; i++) {
+      var x = Math.random() * width;
+      var y = Math.random() * height;
+      var r = 30 + Math.random() * 120;
+      var c = ctx.createRadialGradient(x, y, 0, x, y, r);
+      c.addColorStop(0, 'rgba(255,255,255,0.15)');
+      c.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = c;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
     }
 
-    img.setAttribute('src', chosen);
+    // 相机图标（中心偏上）
+    ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+    ctx.lineWidth = 2.5;
+    var cx = width / 2, cy = height * 0.42;
+    ctx.strokeRect(cx - 24, cy - 16, 48, 32);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+    ctx.beginPath();
+    ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+    ctx.fill();
+
+    return canvas.toDataURL();
+  }
+
+  function applyCover(img, images) {
+    if (images && images.length > 0) {
+      var picked = pickRandom(images);
+      if (picked) {
+        img.setAttribute('src', picked);
+        img.setAttribute('srcset', '');
+        img.style.objectFit = 'cover';
+        img.onerror = function() {
+          img.onerror = null;
+          img.setAttribute('src', generateArtImage(800, 600));
+          img.style.objectFit = 'cover';
+        };
+        return;
+      }
+    }
+
+    // 没找到图片 → 生成渐变艺术图
+    img.setAttribute('src', generateArtImage(800, 600));
     img.setAttribute('srcset', '');
     img.style.objectFit = 'cover';
-    if (chosen !== FALLBACK) {
-      img.setAttribute('onerror', "this.onerror=null;this.src='" + FALLBACK + "';this.style.objectFit='contain'");
-    }
   }
 
   // 加载执行
