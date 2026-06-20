@@ -1,0 +1,13 @@
+{
+  "themeVariables": {
+    "fontSize": "18px",
+    "primaryFontSize": "20px",
+    "tertiaryFontSize": "18px",
+    "mainBkg": "#ffffff",
+    "nodeBorder": "#333333"
+  },
+  "flowchart": {
+    "htmlLabels": true,
+    "curve": "basis"
+  }
+}
