@@ -31,9 +31,9 @@ avatar:
 
 # Banner
 disable_top_img: false
-default_top_img: /img/banner.svg
-index_img: /img/banner.svg
-archive_img: /img/banner.svg
+default_top_img: /img/banner.jpg
+index_img: /img/banner.jpg
+archive_img: /img/banner.jpg
 
 # Cover
 cover:
@@ -41,7 +41,7 @@ cover:
   aside_enable: true
   archives_enable: true
   default_cover:
-    - /img/banner.svg
+    - /img/banner.jpg
 
 # Footer
 footer:
