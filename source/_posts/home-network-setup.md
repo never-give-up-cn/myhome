@@ -320,3 +320,121 @@ ping 192.168.100.1 # ✅ 软路由
 | 现有网络零改动 | ✅ 内网设备不需要改任何配置 |
 
 H3C 透明模式就像一个带安全功能的**智能网线**——串联在互联网入口，不改变路由，只做过滤和保护。这是对现有网络影响最小的防火墙部署方式。
+
+---
+
+### 防火墙其他配置清单
+
+除了路由和安全策略，H3C F1000-T200 还需要以下补充配置：
+
+#### 1. 基础网络配置
+
+```bash
+# 配置桥接接口对（透明模式核心）
+interface Bridge-Aggregation 1
+  port link-type bridge
+  port bridge-aggregation interface GigabitEthernet 1/0/1
+  port bridge-aggregation interface GigabitEthernet 1/0/2
+  description 透明桥接-WAN-to-软路由
+  quit
+
+# DMZ 接口
+interface GigabitEthernet 1/0/3
+  port link-mode route
+  ip address 10.0.2.1 255.255.255.0
+  description DMZ-服务器区
+  quit
+
+# 管理接口（VLAN 接口或 Loopback）
+interface LoopBack 0
+  ip address 192.168.100.254 255.255.255.255
+  quit
+
+# 默认路由（指向 ISP 网关）
+ip route-static 0.0.0.0 0.0.0.0 10.44.66.1
+```
+
+#### 2. NAT 出网配置
+
+透明模式下桥接流量不做 NAT（由软路由负责），但 **DMZ 服务器需要访问外网时**（如下载更新包），需要配置源 NAT：
+
+```bash
+# 配置 ACL 匹配 DMZ 段
+acl advanced 3000
+  rule 0 permit ip source 10.0.2.0 0.0.0.255
+  quit
+
+# 配置 NAT 地址池（使用 WAN 接口 IP）
+nat address-group 1
+  address 10.44.66.112 10.44.66.112
+  quit
+
+# 在 WAN 接口上启用 NAT
+interface GigabitEthernet 1/0/1
+  nat outbound 3000 address-group 1
+  quit
+
+# 安全策略放行 DMZ → Untrust
+rule name dmz-to-untrust
+  source-zone dmz
+  destination-zone untrust
+  action pass
+```
+
+#### 3. 管理安全
+
+```bash
+# 开启 HTTPS 管理（仅允许内网访问）
+ip https enable
+acl advanced 3001
+  rule 0 permit tcp source 192.168.1.0 0.0.0.255 destination 192.168.100.254 0 destination-port eq 443
+  rule 1 permit tcp source 192.168.100.0 0.0.0.255 destination 192.168.100.254 0 destination-port eq 443
+  rule 100 deny ip
+  quit
+
+# SSH 管理
+local-user admin
+  password cipher ********
+  authorization-attribute user-role network-admin
+  service-type ssh https
+  quit
+
+ssh server enable
+```
+
+#### 4. 安全防护
+
+```bash
+# 开启 IPS 特征库
+ips
+  activate signature-decode
+
+# 应用 IPS 策略到桥接接口
+security-policy ip
+  rule name ips-for-all
+    source-zone trust
+    destination-zone untrust
+    action pass
+    profile ips default
+    profile anti-virus default
+```
+
+#### 5. 日常运维配置
+
+| 配置项 | 作用 | 推荐值 |
+|--------|------|--------|
+| **NTP** | 时间同步，保证日志时间准确 | `ntp-service enable` |
+| **SNMP** | 监控设备状态，对接运维平台 | 按需开启 |
+| **日志** | 记录安全事件，便于溯源 | `info-center enable` |
+| **会话超时** | 防止管理会话长期挂起 | `login-user timeout 10` |
+| **密码策略** | 增强管理员账户安全 | 长度≥10位，含特殊字符 |
+| **配置备份** | 定期备份，防止丢失 | 导出到 FTP/TFTP |
+
+#### 6. 透明模式下需注意事项
+
+- **MTU 一致**：桥接接口两侧 MTU 需保持一致，建议 1500
+- **STP 兼容**：如上级或下级设备开启 STP，桥接接口需 BPDU 透传
+- **性能监控**：透明模式对吞吐量有轻微影响，可通过 `display interface` 监控带宽
+- **升级维护**：防火墙固件升级时桥接流量会中断，建议安排在维护窗口
+
+以上配置完成后，H3C F1000-T200 即可在生产环境中稳定运行，兼顾安全防护和网络连通性。
