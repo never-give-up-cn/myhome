@@ -12,7 +12,7 @@ graph TB
         SR_LAN["LAN<br/>192.168.100.1/24"]
     end
 
-    subgraph R2["🔵 路由器"]
+    subgraph R2["🔵 H3C GR-5400AX 路由器"]
         R2_WAN1["WAN1<br/>192.168.100.2"]
         R2_LAN1["LAN1<br/>192.168.1.1"]
         R2_LAN2["LAN2/WAN3<br/>🟡 空"]:::idle
@@ -20,7 +20,7 @@ graph TB
         WIFI["Wi-Fi<br/>摄像头<br/>192.168.1.8"]
     end
 
-    subgraph SW["交换机 192.168.1.12"]
+    subgraph SW["SKS7300-8GPY4XGS 交换机 192.168.1.12"]
         P1("1口: 路由器LAN")
         P2("2口: NVR 1.6")
         P3("3口: R730xd iDRAC")
