@@ -178,9 +178,7 @@ ESXi 物理网卡 ──→ vSwitch ──→ VM Port Group ──→ 虚拟机 
 
 ## 改造后：H3C F1000-T200 防火墙 + 软路由全流量转发
 
-网络入口部署 **H3C F1000-T200 防火墙**（PPPoE 拨号），通过 Transit VLAN 将流量交给**软路由统一 NAT 和代理转发**。各 VLAN 网关都指向软路由子接口，确保所有流量都经过软路由。
-
-### 改造后拓扑
+网络入口部署 **H3C F1000-T200 防火墙**（PPPoE 拨号），通过 **VLAN 1 Transit** 将流量交给**软路由统一 NAT 和代理转发**。软路由仅需 **ETH3 + ETH0 两个端口**，ETH3 接 VLAN 1（WAN），ETH0 接 VLAN 2（LAN主干）。防火墙负责各 VLAN 的三层网关，但**默认路由全部指向软路由（192.168.100.1）**，确保所有流量都经过软路由。
 
 {% img /img/topo-full.png '"H3C防火墙改造后拓扑" "防火墙拓扑"' %}
 
@@ -188,27 +186,51 @@ ESXi 物理网卡 ──→ vSwitch ──→ VM Port Group ──→ 虚拟机 
 
 **DMZ 服务器上网：**
 ```
-R730xd(10.0.2.252) → 网关 10.0.2.1(软路由 eth0.20)
-    → 软路由 NAT → Transit(10.0.99.2 → 10.0.99.1)
-    → H3C 防火墙 → ISP
+R730xd(10.0.2.252) → 网关 10.0.2.1 (防火墙 VLAN 20)
+    → 防火墙检查路由: 0.0.0.0/0 → 192.168.100.1
+    → 转发到 VLAN 2 → 软路由 NAT → 回传防火墙 VLAN 1 → ISP
 ```
 
-**VLAN 间互访：**
+**VLAN 间互访（经防火墙路由）：**
 ```
-VLAN 20(10.0.2.x) → 网关 10.0.2.1(软路由)
-    → 软路由直连路由 → 目标 VLAN 子接口 → 目标设备
+VLAN 20 → 网关 10.0.2.1 (防火墙) → 防火墙路由 → 目标 VLAN 接口 → 目标设备
 ```
 
 ### 防火墙端口与 VLAN 规划
 
-| 防火墙接口 | VLAN | 网段 | 网关（软路由子接口） | 用途 |
-|-----------|------|------|-------------------|------|
+各 VLAN 的**网关 IP 在防火墙上**，但防火墙的**默认路由指向软路由（192.168.100.1）**，所有跨网段和外网流量都要经过软路由。
+
+| 防火墙接口 | VLAN | 网段 | 网关（防火墙接口） | 用途 |
+|-----------|------|------|------------------|------|
 | GE1/0/1 | — | PPPoE | — | WAN 拨号 |
-| GE1/0/2 | **VLAN 99** | **10.0.99.0/30** | 10.0.99.2 (软路由 ETH3) | Transit 到软路由 WAN |
-| GE1/0/3 | **VLAN 10** | **192.168.100.0/24** | 192.168.100.1 (软路由 eth0.10) | 路由器 GR-5400AX |
-| GE1/0/4 | **VLAN 20** | **10.0.2.0/24** | 10.0.2.1 (软路由 eth0.20) | DMZ 服务器 |
-| GE1/0/5 | **VLAN 30** | **10.0.3.0/24** | 10.0.3.1 (软路由 eth0.30) | 监控系统 |
-| GE1/0/6 | **VLAN 40** | **10.0.4.0/24** | 10.0.4.1 (软路由 eth0.40) | IoT 设备 |
+| GE1/0/2 | **VLAN 1** | **10.0.99.0/30** | 10.0.99.1 | Transit → 软路由 ETH3 WAN |
+| GE1/0/3 | **VLAN 2** | **192.168.100.0/24** | 192.168.100.254 | 主干 → 软路由 ETH0 LAN |
+| GE1/0/4 | **VLAN 10** | **192.168.200.0/24** | 192.168.200.1 | H3C GR-5400AX 路由器 |
+| GE1/0/5 | **VLAN 20** | **10.0.2.0/24** | 10.0.2.1 | DMZ 服务器 |
+| GE1/0/6 | **VLAN 30** | **10.0.3.0/24** | 10.0.3.1 | 监控系统 |
+| GE1/0/7 | **VLAN 40** | **10.0.4.0/24** | 10.0.4.1 | IoT 设备 |
+
+### 软路由接口配置（仅需 2 口）
+
+```bash
+# ETH3 - VLAN 1 (WAN) 接防火墙 Transit
+config interface 'wan'
+  option device 'eth3'
+  option proto 'static'
+  option ipaddr '10.0.99.2'
+  option netmask '255.255.255.252'
+  option gateway '10.0.99.1'
+  option dns '223.5.5.5'
+
+# ETH0 - VLAN 2 (LAN) 接防火墙主干
+# 这就是所有 VLAN 的最终网关和 DNS
+config interface 'lan'
+  option device 'eth0'
+  option proto 'static'
+  option ipaddr '192.168.100.1'
+  option netmask '255.255.255.0'
+  option dns '192.168.100.1'
+```
 
 ### 交换机 VLAN 配置（SKS7300-8GPY4XGS）
 
@@ -244,59 +266,103 @@ interface gigabitEthernet 1/0/8
   quit
 ```
 
-### 软路由 VLAN 子接口配置（OpenWRT）
-
-```bash
-# eth0 接交换机 trunk 口，创建 VLAN 子接口
-# 每个子接口对应一个 VLAN 的网关
-
-# VLAN 10 - 路由器
-config interface 'vlan10'
-  option device 'eth0.10'
-  option proto 'static'
-  option ipaddr '192.168.100.1'
-  option netmask '255.255.255.0'
-
-# VLAN 20 - DMZ
-config interface 'vlan20'
-  option device 'eth0.20'
-  option proto 'static'
-  option ipaddr '10.0.2.1'
-  option netmask '255.255.255.0'
-
-# VLAN 30 - 监控
-config interface 'vlan30'
-  option device 'eth0.30'
-  option proto 'static'
-  option ipaddr '10.0.3.1'
-  option netmask '255.255.255.0'
-
-# VLAN 40 - IoT
-config interface 'vlan40'
-  option device 'eth0.40'
-  option proto 'static'
-  option ipaddr '10.0.4.1'
-  option netmask '255.255.255.0'
-
-# WAN - 接防火墙 Transit VLAN 99
-config interface 'wan'
-  option device 'eth3'
-  option proto 'static'
-  option ipaddr '10.0.99.2'
-  option netmask '255.255.255.252'
-  option gateway '10.0.99.1'
-```
-
 ### 路由表
 
 | 设备 | 目标网段 | 下一跳 | 说明 |
 |------|---------|--------|------|
-| **H3C 防火墙** | 0.0.0.0/0 | ISP (PPPoE) | 默认路由出网 |
-| **H3C 防火墙** | 各 VLAN | 直连 | 端口对应网段 |
+| **H3C 防火墙** | 0.0.0.0/0 | **192.168.100.1** | 所有流量 → 软路由 |
+| **H3C 防火墙** | 各 VLAN | 直连接口 | 各 VLAN 网关 |
 | **软路由** | 0.0.0.0/0 | **10.0.99.1** | 默认路由 → 防火墙 |
-| **软路由** | 各 VLAN | 直连子接口 | VLAN 间路由 |
-| **GR-5400AX** | 0.0.0.0/0 | 192.168.100.1 | 默认路由 → 软路由 |
-| **DMZ/IoT/监控** | 0.0.0.0/0 | 对应软路由子接口 | 网关 = 软路由 |
+| **软路由** | 192.168.100.0/24 | 直连 ETH0 | VLAN 2 主干 |
+
+### H3C 防火墙配置要点
+
+```bash
+# PPPoE 拨号
+interface Dialer 1
+  dialer bundle 1
+  ip address pppoe-negotiate
+  quit
+
+interface GigabitEthernet 1/0/1
+  pppoe-client dial-bundle-number 1
+  quit
+
+# 各 VLAN 接口配置
+interface GigabitEthernet 1/0/2
+  port link-mode route
+  ip address 10.0.99.1 255.255.255.252
+  description VLAN1-Transit
+  quit
+
+interface GigabitEthernet 1/0/3
+  port link-mode route
+  ip address 192.168.100.254 255.255.255.0
+  description VLAN2-主干
+  quit
+
+interface GigabitEthernet 1/0/4
+  port link-mode route
+  ip address 192.168.200.1 255.255.255.0
+  description VLAN10-路由器
+  quit
+
+interface GigabitEthernet 1/0/5
+  port link-mode route
+  ip address 10.0.2.1 255.255.255.0
+  description VLAN20-DMZ
+  quit
+
+interface GigabitEthernet 1/0/6
+  port link-mode route
+  ip address 10.0.3.1 255.255.255.0
+  description VLAN30-监控
+  quit
+
+interface GigabitEthernet 1/0/7
+  port link-mode route
+  ip address 10.0.4.1 255.255.255.0
+  description VLAN40-IoT
+  quit
+
+# 最关键：默认路由指向软路由
+ip route-static 0.0.0.0 0.0.0.0 192.168.100.1
+
+# 安全策略 - 放行所有
+security-policy ip
+  rule name permit-all
+    source-zone any
+    destination-zone any
+    action pass
+```
+
+### 交换机 VLAN 配置（SKS7300-8GPY4XGS）
+
+```bash
+# 创建 VLAN
+vlan 1,2,10,20,30,40
+quit
+
+# Trunk 口（接防火墙 GE1/0/4~GE1/0/7）
+interface range gigabitEthernet 1/0/1-1/0/4
+  switchport mode trunk
+  switchport trunk allowed vlan 1,2,10,20,30,40
+  quit
+
+# Access 口（接各 VLAN 设备）
+interface gigabitEthernet 1/0/5
+  switchport access vlan 10     # GR-5400AX WAN
+  quit
+interface gigabitEthernet 1/0/6
+  switchport access vlan 20     # R730xd
+  quit
+interface gigabitEthernet 1/0/7
+  switchport access vlan 30     # NVR
+  quit
+interface gigabitEthernet 1/0/8
+  switchport access vlan 40     # IoT
+  quit
+```
 
 ### H3C 防火墙配置要点
 
@@ -352,15 +418,11 @@ security-policy ip
 | 需求 | 实现 |
 |------|------|
 | 防火墙拨号 | H3C GE1/0/1 PPPoE |
-| 所有流量经软路由 | 各 VLAN 网关指向软路由子接口 |
-| VLAN 隔离 | 防火墙 + 交换机 VLAN Access 口 |
-| 统一代理转发 | 软路由 NAT + VLAN 间路由 |
-| 设备接入 | 交换机对应 VLAN 端口 |
-
-<style>
-/* 机柜描述表格样式 */
-table { width: 100%; }
-</style>
+| 软路由只需 2 口 | ETH3(VLAN 1) + ETH0(VLAN 2) |
+| 各 VLAN 网关 | 防火墙接口 IP |
+| **所有流量必经软路由** | **防火墙默认路由 → 192.168.100.1** |
+| 统一 NAT + DNS | 软路由 192.168.100.1 |
+| VLAN 扩展 | 交换机 Trunk + Access |
 
 ---
 

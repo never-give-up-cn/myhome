@@ -5,82 +5,82 @@ graph TB
 
     subgraph FW["🔴 H3C F1000-T200 防火墙 (PPPoE 拨号)"]
         GE1["GE1/0/1 WAN PPPoE"]
-        GE2["GE1/0/2 Transit VLAN 99<br/>10.0.99.1/30"]
-        GE3["GE1/0/3 VLAN 10 路由器<br/>192.168.100.254/24"]
-        GE4["GE1/0/4 VLAN 20 DMZ<br/>10.0.2.254/24"]
-        GE5["GE1/0/5 VLAN 30 监控<br/>10.0.3.254/24"]
-        GE6["GE1/0/6 VLAN 40 IoT<br/>10.0.4.254/24"]
-        FW_R["路由: 各 VLAN 默认网关 → 软路由"]
+        GE2["GE1/0/2 VLAN 1 Transit<br/>10.0.99.1/30"]
+        GE3["GE1/0/3 VLAN 2 主干<br/>192.168.100.254/24"]
+        GE4["GE1/0/4 VLAN 10 路由器<br/>192.168.200.1/24"]
+        GE5["GE1/0/5 VLAN 20 DMZ<br/>10.0.2.1/24"]
+        GE6["GE1/0/6 VLAN 30 监控<br/>10.0.3.1/24"]
+        GE7["GE1/0/7 VLAN 40 IoT<br/>10.0.4.1/24"]
+        FIREWALL_ROUTE["默认路由 → 192.168.100.1 (VLAN 2)"]
     end
 
-    subgraph SR["🟢 软路由 ( OpenWRT )"]
-        ETH3("ETH3 WAN"):::port
-        ETH0("ETH0 Trunk"):::port
+    subgraph SR["🟢 软路由 (仅需 2 口)"]
+        ETH3("ETH3"):::port
+        ETH0("ETH0"):::port
         ETH1("ETH1<br/>🟡 空"):::port_idle
         ETH2("ETH2<br/>🟡 空"):::port_idle
-        SR_WAN["WAN 10.0.99.2/30"]
-        SUB10["eth0.10: 192.168.100.1/24"]
-        SUB20["eth0.20: 10.0.2.1/24"]
-        SUB30["eth0.30: 10.0.3.1/24"]
-        SUB40["eth0.40: 10.0.4.1/24"]
+        SR_WAN["VLAN 1: 10.0.99.2/30<br/>网关: 10.0.99.1"]
+        SR_LAN["VLAN 2: 192.168.100.1/24<br/>所有 VLAN 网关 + DNS"]
         SR_NAT["NAT + 代理转发"]
     end
 
-    subgraph SW["SKS7300-8GPY4XGS 网管交换机"]
-        P_TRUNK["Trunk 口 → 软路由 ETH0"]
-        P10["VLAN 10 Access"]
-        P20["VLAN 20 Access"]
-        P30["VLAN 30 Access"]
-        P40["VLAN 40 Access"]
+    subgraph SW["SKS7300-8GPY4XGS 交换机"]
+        direction TB
+        TRUNK["Trunk: VLAN 1,2,10,20,30,40"]
+        P10["Access VLAN 10 → 路由器"]
+        P20["Access VLAN 20 → DMZ"]
+        P30["Access VLAN 30 → NVR"]
+        P40["Access VLAN 40 → IoT"]
+        P_LAN["Access VLAN 2 → 内网扩展"]
     end
 
-    subgraph VLAN10["VLAN 10 路由器 192.168.100.0/24<br/>网关: 192.168.100.1"]
-        R2["H3C GR-5400AX<br/>WAN: 192.168.100.2"]
-        R2_LAN["LAN: 192.168.1.1 → 内网设备"]
+    subgraph VLAN10["VLAN 10 路由器 192.168.200.0/24<br/>网关: 192.168.200.1 (防火墙)"]
+        R2["H3C GR-5400AX<br/>WAN: 192.168.200.2"]
+        R2_LAN["LAN: 192.168.1.1"]
         PC["电脑 192.168.1.5"]
     end
 
-    subgraph VLAN20["VLAN 20 DMZ 10.0.2.0/24<br/>网关: 10.0.2.1"]
+    subgraph VLAN20["VLAN 20 DMZ 10.0.2.0/24<br/>网关: 10.0.2.1 (防火墙)"]
         R730xd["Dell R730xd ESXi<br/>10.0.2.252"]
         VM["虚拟机 10.0.2.11"]
     end
 
-    subgraph VLAN30["VLAN 30 监控 10.0.3.0/24<br/>网关: 10.0.3.1"]
+    subgraph VLAN30["VLAN 30 监控 10.0.3.0/24<br/>网关: 10.0.3.1 (防火墙)"]
         NVR["NVR 录像机<br/>10.0.3.6"]
         CAM["摄像头<br/>10.0.3.8"]
     end
 
-    subgraph VLAN40["VLAN 40 IoT 10.0.4.0/24<br/>网关: 10.0.4.1"]
+    subgraph VLAN40["VLAN 40 IoT 10.0.4.0/24<br/>网关: 10.0.4.1 (防火墙)"]
         IOT_DEV["物联网设备<br/>10.0.4.2"]
     end
 
-    ISP -->|"光猫"| GE1
-    GE2 -->|"Transit 10.0.99.0/30"| ETH3
-    GE3 -->|"VLAN 10"| P10
-    GE4 -->|"VLAN 20"| P20
-    GE5 -->|"VLAN 30"| P30
-    GE6 -->|"VLAN 40"| P40
-    P_TRUNK --> ETH0
-
-    SUB10 === P10
+    ISP -->|"PPPoE"| GE1
+    GE2 -->|"VLAN 1 Transit 10.0.99.0/30"| ETH3
+    GE3 -->|"VLAN 2 主干 192.168.100.0/24"| ETH0
+    GE4 --> SW
+    GE5 --> SW
+    GE6 --> SW
+    GE7 --> SW
+    SW --> TRUNK
+    TRUNK --> P10
+    TRUNK --> P20
+    TRUNK --> P30
+    TRUNK --> P40
+    TRUNK --- P_LAN
     P10 --- R2
     R2 --- R2_LAN
     R2_LAN --- PC
-    SUB20 === P20
     P20 --- R730xd
     R730xd --- VM
-    SUB30 === P30
     P30 --- NVR
     P30 --- CAM
-    SUB40 === P40
     P40 --- IOT_DEV
 
-    subgraph ROUTES["📋 静态路由表"]
-        F1["H3C: 10.0.99.0/30 → 直连"]
-        F2["H3C: 0.0.0.0/0 → ISP (PPPoE)"]
-        F3["H3C: 各 VLAN 默认路由 → 对应软路由子接口"]
-        S1["软路由: 0.0.0.0/0 → 10.0.99.1 (H3C)"]
-        S2["软路由: VLAN 间路由 → 直连子接口"]
+    subgraph ROUTES["📋 路由表"]
+        H1["H3C: 0.0.0.0/0 → 192.168.100.1 (软路由 VLAN 2)"]
+        H2["H3C: 各 VLAN → 直连接口"]
+        S1["软路由: 0.0.0.0/0 → 10.0.99.1 (防火墙 VLAN 1)"]
+        S2["软路由: 192.168.100.0/24 → 直连 VLAN 2"]
     end
 
     classDef port fill:#90EE90,stroke:#333,stroke-width:2
