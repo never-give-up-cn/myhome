@@ -28,8 +28,8 @@ comments: false
 </div>
 
 <style>
-/* Reset page padding for full-screen cover */
-.page-cover .nexmoe-post {
+/* Reset page padding for full-screen cover - :has at the post level */
+.nexmoe-post:has(.cover-page) {
   margin: 0 !important;
   padding: 0 !important;
   max-width: 100% !important;
@@ -37,29 +37,23 @@ comments: false
   background: transparent !important;
   box-shadow: none !important;
 }
-.page-cover .nexmoe-post-cover,
-.page-cover .nexmoe-post-meta,
-.page-cover .nexmoe-post-footer {
+.nexmoe-post:has(.cover-page) .nexmoe-post-cover,
+.nexmoe-post:has(.cover-page) .nexmoe-post-meta,
+.nexmoe-post:has(.cover-page) .nexmoe-post-copyright,
+.nexmoe-post:has(.cover-page) .nexmoe-post-footer,
+.nexmoe-post:has(.cover-page) .nexmoe-post-right {
   display: none !important;
 }
-.page-cover .article-entry {
+.nexmoe-post:has(.cover-page) .article-entry,
+.nexmoe-post:has(.cover-page) #article-container,
+.nexmoe-post:has(.cover-page) .nexmoe-primary {
   padding: 0 !important;
   margin: 0 !important;
-}
-.page-cover #article-container {
-  padding: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
 }
 
 /* Full-screen cover */
-.cover-page {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  z-index: 100;
-}
 
 /* 9-grid background */
 .cover-grid {
