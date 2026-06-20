@@ -1,0 +1,199 @@
+# Butterfly Theme Config
+# ==================================================
+
+# Navigation
+nav:
+  display_title: true
+  display_post_title: true
+  fixed: true
+
+menu:
+  首页: / || fas fa-home
+  作品集: /photos/ || fas fa-images
+  归档: /archives/ || fas fa-archive
+  分类: /categories/ || fas fa-folder-open
+  标签: /tags/ || fas fa-tags
+  关于: /about/ || fas fa-heart
+
+# Social
+social:
+  fas fa-camera: https://500px.com/your-username || 500px || '#00ade6'
+  fab fa-instagram: https://instagram.com/your-username || Instagram || '#e4405f'
+  fas fa-envelope: mailto:your-email@example.com || Email || '#4a7dbe'
+
+# Favicon
+favicon: /img/cover.jpg
+
+# Avatar
+avatar:
+  img: /img/avatar.jpg
+  effect: true
+
+# Banner - all use cover image
+disable_top_img: false
+default_top_img: /img/cover.jpg
+index_img: /img/cover.jpg
+archive_img: /img/cover.jpg
+
+# Cover
+cover:
+  index_enable: true
+  aside_enable: true
+  archives_enable: true
+  default_cover:
+    - /img/cover.jpg
+
+# Footer
+footer:
+  owner:
+    enable: true
+    since: 2024
+  copyright:
+    enable: true
+    version: false
+  custom_text: 📷 用镜头定格时光
+
+# Aside
+aside:
+  enable: true
+  hide: false
+  button: true
+  mobile: true
+  position: right
+  card_author:
+    enable: true
+    description: 摄影爱好者 · 光影捕手
+    button:
+      enable: true
+      icon: fas fa-camera-retro
+      text: 作品集
+      link: /photos
+  card_announcement:
+    enable: true
+    content: 📢 每一张照片，都是时光的标本。
+  card_recent_post:
+    enable: true
+    limit: 5
+    sort: date
+  card_categories:
+    enable: true
+    limit: 8
+  card_tags:
+    enable: true
+    limit: 40
+    color: true
+    orderby: random
+  card_archives:
+    enable: true
+    type: monthly
+    format: YYYY年MM月
+    order: -1
+    limit: 8
+  card_webinfo:
+    enable: true
+    post_count: true
+    last_push_date: true
+
+# Post meta
+post_meta:
+  page:
+    date_type: created
+    date_format: date
+    categories: true
+    tags: true
+    label: true
+  post:
+    position: center
+    date_type: both
+    date_format: date
+    categories: true
+    tags: true
+    label: true
+
+# Index
+subtitle:
+  enable: true
+  effect: true
+  source: false
+  sub:
+    - 📷 用镜头记录世界的每一个瞬间
+    - 🌅 追逐光影，定格美好
+    - 🏔️ 山河远阔，人间烟火
+
+index_layout: 3
+index_post_content:
+  method: 2
+  length: 300
+
+# Post
+toc:
+  post: true
+  page: false
+  number: true
+  expand: false
+  style_simple: false
+  scroll_percent: true
+
+post_copyright:
+  enable: true
+  license: CC BY-NC-SA 4.0
+
+# Dark Mode
+darkmode:
+  enable: true
+  button: true
+  autoChangeMode: 1
+
+# Code blocks
+code_blocks:
+  theme: ocean
+  macStyle: true
+  copy: true
+
+# Search
+search:
+  use: local_search
+  placeholder: 搜索文章...
+  local_search:
+    preload: true
+    top_n_per_article: 1
+    unescape: true
+
+# Beautify
+beautify:
+  enable: true
+  field: post
+
+# Theme color
+theme_color:
+  enable: true
+  main: '#49B1F5'
+
+# Preloader
+preloader:
+  enable: true
+  source: 1
+
+# Lazyload
+lazyload:
+  enable: true
+  native: true
+  field: site
+
+# Pjax
+pjax:
+  enable: true
+
+# Snackbar
+snackbar:
+  enable: true
+
+# Lightbox
+lightbox: fancybox
+
+# wordcount
+wordcount:
+  enable: true
+  post_wordcount: true
+  min2read: true
+  total_wordcount: true
