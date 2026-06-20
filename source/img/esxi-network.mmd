@@ -1,0 +1,82 @@
+graph TB
+    subgraph Physical["🖥️ ESXi 物理主机 - Dell R730xd"]
+        NIC0["物理网卡 vmnic0<br/>连接到交换机 6口"]
+        NIC1["物理网卡 vmnic1<br/>(备用/上行)"]
+    end
+
+    subgraph vSwitch["🔀 虚拟交换机 vSwitch0"]
+        UP1["上行链路: vmnic0"]
+        UP2["上行链路: vmnic1 (备用)"]
+        PG1["端口组 VM Network<br/>VLAN 1 或 4095"]
+        PG2["端口组 Management Network<br/>VLAN 1"]
+    end
+
+    subgraph VMK["🧠 VMkernel 网卡"]
+        VMK0["vmk0<br/>Management<br/>192.168.1.252"]
+        VMK1["vmk1<br/>vMotion<br/>(可选独立网段)"]
+        VMK2["vmk2<br/>iSCSI/NFS<br/>(可选独立网段)"]
+    end
+
+    subgraph TCPIP["📡 TCP/IP 堆栈"]
+        DEFAULT["默认 TCP/IP 堆栈<br/>管理流量 + VM 流量"]
+        VMOTION["vMotion TCP/IP 堆栈<br/>迁移流量"]
+        PROV["Provisioning TCP/IP 堆栈<br/>NFS/iSCSI 存储流量"]
+    end
+
+    subgraph VMs["💻 虚拟机"]
+        VM1["Ubuntu Server<br/>192.168.1.11"]
+        VM2["Pi-hole / AdGuard<br/>(DNS)"]
+        VM3["额外服务"]
+    end
+
+    subgraph Firewall["🛡️ ESXi 防火墙规则"]
+        F1["SSH 服务: 22/tcp"]
+        F2["Web 管理: 443/tcp"]
+        F3["vMotion: 8000/tcp"]
+        F4["iSCSI: 3260/tcp"]
+        F5["NFS: 2049/tcp"]
+        F6["NTP: 123/udp"]
+        F7["DNS 客户端: 53/udp"]
+        F8["SNMP: 161/udp"]
+    end
+
+    subgraph VM_HW["虚拟机硬件"]
+        VNIC["虚拟网卡 vmxnet3<br/>每个 VM 1~4 个"]
+    end
+
+    NIC0 --> UP1
+    NIC1 --> UP2
+    UP1 --> vSwitch
+    UP2 --> vSwitch
+    vSwitch --> PG1
+    vSwitch --> PG2
+    PG2 --> VMK0
+    PG1 --> VNIC
+    VNIC --> VM1
+    VNIC --> VM2
+    VNIC --> VM3
+    VMK0 --> DEFAULT
+    VMK1 --> VMOTION
+    VMK2 --> PROV
+    DEFAULT --- F1
+    DEFAULT --- F2
+    DEFAULT --- F6
+    DEFAULT --- F7
+    DEFAULT --- F8
+    VMOTION --- F3
+    PROV --- F4
+    PROV --- F5
+
+    classDef phys fill:#FFDDDD,stroke:#333
+    classDef virt fill:#DDFFDD,stroke:#333
+    classDef vmk fill:#FFFFDD,stroke:#333
+    classDef stack fill:#DDDDFF,stroke:#333
+    classDef vm fill:#DDFFFF,stroke:#333
+    classDef fw fill:#FFDDFF,stroke:#333
+
+    class NIC0,NIC1 phys
+    class vSwitch,PG1,PG2,UP1,UP2 virt
+    class VMK0,VMK1,VMK2 vmk
+    class DEFAULT,VMOTION,PROV stack
+    class VM1,VM2,VM3,VM_HW,VNIC vm
+    class F1,F2,F3,F4,F5,F6,F7,F8 fw
