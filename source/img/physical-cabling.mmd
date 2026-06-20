@@ -5,57 +5,51 @@ graph TB
         end
 
         subgraph FW_SECTION["🔴 H3C F1000-T200 防火墙"]
-            FW_P1["GE1/0/1 WAN ⬤ 红"]
-            FW_P2["GE1/0/2 VLAN1 ⬤ 蓝"]
-            FW_P3["GE1/0/3 VLAN2 ⬤ 蓝"]
-            FW_P4["GE1/0/4~7 Trunk ⬤ 黄"]
+            FW_P1["GE1/0/1 WAN PPPoE"]
+            FW_P2["GE1/0/2 VLAN1 Transit → 软路由ETH3"]
+            FW_P3["GE1/0/3 VLAN2 主干 → 软路由ETH0"]
+            FW_P4["GE1/0/4 VLAN10 → 路由器"]
+            FW_P5["GE1/0/5 VLAN20 → R730xd"]
+            FW_P6["GE1/0/6 VLAN30 → NVR"]
+            FW_P7["GE1/0/7 VLAN40 → IoT"]
+            FW_P8["GE1/0/8~12 备用"]
         end
 
         subgraph SR_SECTION["🟢 软路由"]
-            SR_ETH3["ETH3 (WAN)"]
-            SR_ETH0["ETH0 (LAN)"]
+            SR_ETH3["ETH3 ← 防火墙 GE1/0/2"]
+            SR_ETH0["ETH0 ← 防火墙 GE1/0/3"]
             SR_ETH1["ETH1 闲置"]
             SR_ETH2["ETH2 闲置"]
         end
 
-        subgraph SW_SECTION["🔀 SKS7300 交换机"]
-            SW_TRUNK["Trunk 口 1-4<br/>(接防火墙)"]
-            SW_ACC1["Access 口 5<br/>VLAN 10 路由器"]
-            SW_ACC2["Access 口 6<br/>VLAN 20 DMZ"]
-            SW_ACC3["Access 口 7<br/>VLAN 30 NVR"]
-            SW_ACC4["Access 口 8<br/>VLAN 40 IoT"]
-            SW_ACC5["Access 口 9<br/>VLAN 10 电脑"]
-            SW_SPARE["口 10-12 备用"]
+        subgraph DEV_SECTION["📡 设备（直连防火墙各端口）"]
+            ROUTER["H3C GR-5400AX<br/>WAN ← GE1/0/4"]
+            R730XD["R730xd ESXi<br/>管理口 ← GE1/0/5"]
+            NVR["NVR 录像机 ← GE1/0/6"]
+            IOT["小米IoT中枢 ← GE1/0/7"]
         end
 
-        subgraph DEV_SECTION["📡 设备"]
-            ROUTER["H3C GR-5400AX<br/>WAN ← 口5"]
-            R730XD["R730xd ESXi<br/>管理口 ← 口6"]
-            NVR["NVR 录像机<br/>← 口7"]
-            IOT["小米IoT中枢<br/>← 口8"]
-            PC["电脑<br/>← 口9"]
+        subgraph SW_SECTION["🔀 SKS7300 交换机<br/>（接路由器LAN口扩展内网）"]
+            SW_DESC["路由器 LAN → 交换机<br/>交换机 → 电脑及其他内网设备"]
         end
     end
 
-    ONT -->|"⬤ 红 网线"| FW_P1
-    FW_P2 -->|"⬤ 蓝"| SR_ETH3
-    FW_P3 -->|"⬤ 蓝"| SR_ETH0
-    FW_P4 -->|"⬤ 黄 Trunk"| SW_TRUNK
-    SW_ACC1 -->|"⬤ 绿"| ROUTER
-    SW_ACC2 -->|"⬤ 绿"| R730XD
-    SW_ACC3 -->|"⬤ 绿"| NVR
-    SW_ACC4 -->|"⬤ 绿"| IOT
-    SW_ACC5 -->|"⬤ 绿"| PC
+    ONT --> FW_P1
+    FW_P2 --> SR_ETH3
+    FW_P3 --> SR_ETH0
+    FW_P4 --> ROUTER
+    FW_P5 --> R730XD
+    FW_P6 --> NVR
+    FW_P7 --> IOT
 
     classDef isp fill:#FFE4E1,stroke:#333
     classDef fw fill:#FFCCCC,stroke:#333
     classDef sr fill:#CCFFCC,stroke:#333
-    classDef sw fill:#FFFFCC,stroke:#333
     classDef dev fill:#E8E8FF,stroke:#333
-    classDef idle fill:#F5F5F5,stroke:#999,stroke-dasharray:5 5
+    classDef sw fill:#FFFFCC,stroke:#333
 
     class ONT isp
-    class FW_P1,FW_P2,FW_P3,FW_P4 fw
+    class FW_P1,FW_P2,FW_P3,FW_P4,FW_P5,FW_P6,FW_P7,FW_P8 fw
     class SR_ETH3,SR_ETH0,SR_ETH1,SR_ETH2 sr
-    class SW_TRUNK,SW_ACC1,SW_ACC2,SW_ACC3,SW_ACC4,SW_ACC5,SW_SPARE sw
-    class ROUTER,R730XD,NVR,IOT,PC dev
+    class ROUTER,R730XD,NVR,IOT dev
+    class SW_SECTION,SW_DESC sw
