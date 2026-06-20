@@ -1,5 +1,15 @@
 /* Nexmoe Photography Custom Styles */
 
+/* Sticky post badge */
+.article-list .article-item:first-child .article-title::after {
+  content: " 📌 置顶";
+  font-size: 0.6em;
+  color: #e94560;
+  font-weight: normal;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
 /* Article cover images - full width */
 .nexmoe-article-img {
   width: 100%;
