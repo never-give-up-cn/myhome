@@ -12,7 +12,7 @@
   function getArticleImages(html) {
     var results = [];
     // 从 article-container 中提取所有图片
-    var match = html.match(/id="article-container"[^>]*>([\s\S]*?)<\/div>\s*<\/(div|section|article)>/);
+    var match = html.match(/id="article-container"[^>]*>([\s\S]*?)<\/article>/);
     var content = match ? match[1] : html;
 
     // 提取所有 img src
