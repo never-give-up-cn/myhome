@@ -88,19 +88,32 @@
   }
 
   // 色彩方案
-  // 行业图标池（文章无图时随机使用）
-  var iconPool = [
-    '/img/icons/photography.svg',
-    '/img/icons/network.svg',
-    '/img/icons/server.svg',
-    '/img/icons/switch.svg',
-    '/img/icons/virtualization.svg',
-    '/img/icons/iot.svg',
-    '/img/icons/computer.svg',
-    '/img/icons/security.svg',
-    '/img/icons/wifi.svg',
-    '/img/icons/surveillance.svg'
+  // 多图标组合（每次随机选 3-4 个组合）
+  var iconCombos = [
+    ['photography','network','server'],
+    ['server','switch','virtualization'],
+    ['wifi','network','security'],
+    ['iot','wifi','computer'],
+    ['photography','surveillance','iot'],
+    ['network','server','security','switch'],
+    ['photography','computer','iot','wifi'],
+    ['server','virtualization','network','security'],
+    ['surveillance','iot','wifi','photography'],
+    ['switch','network','server','virtualization']
   ];
+
+  var iconSvgs = {
+    photography: '<path d="M-30,-22 L30,-22 L30,22 L-30,22 Z" stroke="white" stroke-width="2.5" fill="none" rx="4"/><circle cx="0" cy="0" r="12" stroke="white" stroke-width="2" fill="none"/><circle cx="0" cy="0" r="7" fill="rgba(255,255,255,0.15)"/><rect x="20" y="-28" width="7" height="5" fill="rgba(255,255,255,0.3)"/><ellipse cx="-3" cy="-3" rx="3" ry="1.5" fill="rgba(255,255,255,0.35)" transform="rotate(-30,-3,-3)"/>',
+    network: '<rect x="-32" y="-8" width="64" height="16" rx="3" stroke="white" stroke-width="2" fill="none"/><circle cx="-18" cy="0" r="3" fill="rgba(255,255,255,0.2)"/><circle cx="0" cy="0" r="3" fill="rgba(255,255,255,0.2)"/><circle cx="18" cy="0" r="3" fill="rgba(255,255,255,0.2)"/><rect x="-32" y="-26" width="64" height="14" rx="2" stroke="white" stroke-width="1.5" fill="none" opacity="0.5"/><rect x="-32" y="12" width="64" height="14" rx="2" stroke="white" stroke-width="1.5" fill="none" opacity="0.5"/>',
+    server: '<rect x="-28" y="-28" width="56" height="56" rx="3" stroke="white" stroke-width="2.5" fill="none"/><rect x="-22" y="-20" width="44" height="7" rx="1" fill="rgba(255,255,255,0.12)"/><rect x="-22" y="-8" width="44" height="7" rx="1" fill="rgba(255,255,255,0.12)"/><rect x="-22" y="4" width="44" height="7" rx="1" fill="rgba(255,255,255,0.12)"/><circle cx="20" cy="-24" r="2" fill="rgba(46,204,113,0.6)"/>',
+    switch: '<rect x="-28" y="-18" width="56" height="36" rx="3" stroke="white" stroke-width="2.5" fill="none"/><rect x="-24" y="-14" width="12" height="9" rx="1.5" fill="rgba(255,255,255,0.12)"/><rect x="-8" y="-14" width="12" height="9" rx="1.5" fill="rgba(255,255,255,0.12)"/><rect x="8" y="-14" width="12" height="9" rx="1.5" fill="rgba(255,255,255,0.12)"/><rect x="-24" y="-1" width="48" height="5" rx="1" fill="rgba(255,255,255,0.08)"/><rect x="-24" y="7" width="48" height="5" rx="1" fill="rgba(255,255,255,0.08)"/><circle cx="21" cy="-14" r="1.5" fill="rgba(46,204,113,0.5)"/>',
+    virtualization: '<rect x="-26" y="-32" width="52" height="64" rx="4" stroke="white" stroke-width="2.5" fill="none"/><rect x="-20" y="-26" width="40" height="26" rx="2" fill="rgba(255,255,255,0.08)"/><text x="0" y="-12" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.35)" font-family="monospace">VM</text><line x1="-16" y1="6" x2="16" y2="6" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/><line x1="-16" y1="11" x2="16" y2="11" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/><line x1="-16" y1="16" x2="16" y2="16" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/><line x1="-16" y1="21" x2="16" y2="21" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/><circle cx="20" cy="-20" r="1.5" fill="rgba(46,204,113,0.5)"/>',
+    iot: '<circle cx="0" cy="-8" r="13" stroke="white" stroke-width="2.5" fill="none"/><path d="M-18,8 L-10,0 L-6,12 L2,-4 L10,12 L14,0 L22,8" stroke="white" stroke-width="1.8" fill="none" stroke-linejoin="round"/><path d="M-26,18 L-16,13 L-7,22 L2,10 L11,22 L20,13 L30,18" stroke="white" stroke-width="1.2" fill="none" stroke-linejoin="round" opacity="0.35"/><circle cx="4" cy="-10" r="1.5" fill="rgba(255,255,255,0.4)"/>',
+    computer: '<rect x="-32" y="-24" width="64" height="46" rx="4" stroke="white" stroke-width="2.5" fill="none"/><rect x="-28" y="-20" width="56" height="20" rx="2" fill="rgba(255,255,255,0.08)"/><rect x="-28" y="4" width="24" height="14" rx="1.5" fill="rgba(255,255,255,0.06)"/><rect x="-2" y="4" width="28" height="14" rx="1.5" fill="rgba(255,255,255,0.06)"/><line x1="-18" y1="16" x2="20" y2="16" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>',
+    security: '<path d="M-6,-32 Q-30,-32 -30,-10 Q-30,12 -12,18 L-12,30 L12,30 L12,18 Q30,12 30,-10 Q30,-32 6,-32 Z" stroke="white" stroke-width="2.5" fill="none"/><path d="M-10,4 L-10,18 L10,18 L10,4" stroke="white" stroke-width="1.8" fill="none"/><path d="M-18,-12 L-12,-12 L-6,-6" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="0" cy="0" rx="8" ry="6" fill="rgba(255,255,255,0.1)"/>',
+    wifi: '<circle cx="-12" cy="0" r="9" stroke="white" stroke-width="2.5" fill="none"/><rect x="4" y="-7" width="28" height="14" rx="3" stroke="white" stroke-width="2" fill="none"/><line x1="-12" y1="-9" x2="-12" y2="-20" stroke="white" stroke-width="2"/><line x1="-20" y1="-16" x2="-4" y2="-16" stroke="white" stroke-width="1.2" opacity="0.4"/><path d="M-24,-18 Q-26,-28 -20,-32" stroke="white" stroke-width="1.2" fill="none" opacity="0.25"/>',
+    surveillance: '<circle cx="0" cy="-4" r="16" stroke="white" stroke-width="2.5" fill="none"/><path d="M-22,14 Q-22,30 0,30 Q22,30 22,14" stroke="white" stroke-width="2" fill="none"/><circle cx="-4" cy="-6" r="2.5" fill="rgba(255,255,255,0.15)"/><circle cx="4" cy="-6" r="2.5" fill="rgba(255,255,255,0.15)"/><path d="M-3,2 Q0,5 3,2" stroke="white" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.3"/>'
+  };
 
   var themeColors = [
     ['#667eea', '#764ba2'], ['#f093fb', '#f5576c'],
@@ -250,25 +263,181 @@
         img.style.objectFit = 'cover';
         img.onerror = function() {
           img.onerror = null;
-          img.onerror = null;
-          var iconSrc = pickRandom(iconPool) || '/img/icons/photography.svg';
-          img.setAttribute('src', iconSrc);
-          img.style.objectFit = 'contain';
-          img.style.padding = '30px';
-          img.style.background = 'linear-gradient(135deg, var(--color-bg1, #667eea), var(--color-bg2, #764ba2))';
+          img.setAttribute('src', drawMultiIconCanvas());
+          img.style.objectFit = 'cover';
+          img.style.padding = '0';
+          img.style.background = 'none';
         };
         return;
       }
     }
 
-    // 没找到图片 → 随机使用行业图标
-    var iconSrc = pickRandom(iconPool) || '/img/icons/photography.svg';
-    img.setAttribute('src', iconSrc);
+    // 没找到图片 → 随机多图标组合
+    img.setAttribute('src', drawMultiIconCanvas());
     img.setAttribute('srcset', '');
-    img.style.objectFit = 'contain';
-    img.style.padding = '30px';
-    img.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
-    img.style.boxSizing = 'border-box';
+    img.style.objectFit = 'cover';
+    img.style.padding = '0';
+    img.style.background = 'none';
+  }
+
+  // 绘制多图标组合图（同步版，用 canvas 原生绘图）
+  function drawMultiIconCanvas() {
+    var w = 800, h = 600;
+    var canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    var ctx = canvas.getContext('2d');
+
+    // 渐变背景
+    var grad = ctx.createLinearGradient(0, 0, w * 0.7, h);
+    var ci = Math.floor(Math.random() * (themeColors.length - 1));
+    grad.addColorStop(0, themeColors[ci][0]);
+    grad.addColorStop(0.5, themeColors[ci][1]);
+    grad.addColorStop(1, themeColors[ci][0]);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // 装饰光晕
+    for (var s = 0; s < 6; s++) {
+      var sx = Math.random() * w, sy = Math.random() * h, sr = 60 + Math.random() * 100;
+      var c = ctx.createRadialGradient(sx, sy, 0, sx, sy, sr);
+      c.addColorStop(0, 'rgba(255,255,255,0.08)');
+      c.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = c;
+      ctx.beginPath(); ctx.arc(sx, sy, sr, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // 散点
+    for (var d = 0; d < 50; d++) {
+      ctx.fillStyle = 'rgba(255,255,255,' + (0.03 + Math.random() * 0.08) + ')';
+      ctx.beginPath();
+      ctx.arc(Math.random() * w, Math.random() * h, 1 + Math.random() * 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // 选一组图标 3-4 个
+    var combo = iconCombos[Math.floor(Math.random() * iconCombos.length)];
+    var count = combo.length;
+    var cols = 2, rows = 2;
+    var cellW = w / cols, cellH = h / rows;
+    var rad = Math.min(cellW, cellH) * 0.3;
+
+    for (var i = 0; i < count && i < 4; i++) {
+      var col = i % cols, row = Math.floor(i / cols);
+      var cx = col * cellW + cellW / 2, cy = row * cellH + cellH / 2;
+      var name = combo[i];
+
+      ctx.save();
+      ctx.translate(cx, cy);
+
+      // 图标圆形底
+      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      ctx.beginPath();
+      ctx.arc(0, 0, rad * 0.7, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(0, 0, rad * 0.7, 0, Math.PI * 2);
+      ctx.stroke();
+
+      var s = rad * 0.55;
+      ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+      ctx.lineWidth = 2.5;
+      ctx.fillStyle = 'rgba(255,255,255,0.12)';
+
+      // 根据图标名称绘制不同形状
+      if (name === 'photography') {
+        ctx.strokeRect(-s*0.8, -s*0.6, s*1.6, s*1.2);
+        ctx.beginPath(); ctx.arc(0, 0, s*0.4, 0, Math.PI*2); ctx.stroke();
+        ctx.beginPath(); ctx.arc(0, 0, s*0.25, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.25)';
+        ctx.fillRect(s*0.6, -s*0.8, s*0.25, s*0.2);
+      } else if (name === 'network') {
+        for (var n = 0; n < 3; n++) {
+          var ny = -s*0.7 + n * s*0.7;
+          ctx.strokeRect(-s*0.9, ny, s*1.8, s*0.45);
+          ctx.fillStyle = 'rgba(255,255,255,0.08)';
+          ctx.beginPath(); ctx.arc(0, ny + s*0.22, s*0.1, 0, Math.PI*2); ctx.fill();
+        }
+      } else if (name === 'server') {
+        ctx.strokeRect(-s*0.8, -s*0.9, s*1.6, s*1.8);
+        for (var sv = 0; sv < 4; sv++) {
+          ctx.fillStyle = 'rgba(255,255,255,0.08)';
+          ctx.fillRect(-s*0.65, -s*0.65 + sv * s*0.38, s*1.3, s*0.22);
+        }
+        ctx.fillStyle = 'rgba(46,204,113,0.5)';
+        ctx.beginPath(); ctx.arc(s*0.55, -s*0.75, s*0.07, 0, Math.PI*2); ctx.fill();
+      } else if (name === 'switch') {
+        ctx.strokeRect(-s*0.85, -s*0.55, s*1.7, s*1.1);
+        for (var sw = 0; sw < 3; sw++) {
+          ctx.fillStyle = 'rgba(255,255,255,0.08)';
+          ctx.fillRect(-s*0.7 + sw * s*0.5, -s*0.4, s*0.35, s*0.25);
+        }
+        ctx.fillStyle = 'rgba(46,204,113,0.5)';
+        ctx.beginPath(); ctx.arc(s*0.6, -s*0.4, s*0.05, 0, Math.PI*2); ctx.fill();
+      } else if (name === 'virtualization') {
+        ctx.strokeRect(-s*0.75, -s*0.95, s*1.5, s*1.9);
+        ctx.fillStyle = 'rgba(255,255,255,0.06)';
+        ctx.fillRect(-s*0.55, -s*0.75, s*1.1, s*0.7);
+        ctx.fillStyle = 'rgba(255,255,255,0.2)';
+        ctx.font = Math.round(s*0.3) + 'px monospace';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('VM', 0, -s*0.4);
+        for (var vm = 0; vm < 4; vm++) {
+          ctx.fillStyle = 'rgba(255,255,255,0.1)';
+          ctx.fillRect(-s*0.55, s*0.1 + vm * s*0.3, s*1.1, s*0.18);
+        }
+      } else if (name === 'iot') {
+        ctx.beginPath(); ctx.arc(0, -s*0.2, s*0.4, 0, Math.PI*2); ctx.stroke();
+        ctx.beginPath(); ctx.arc(0, -s*0.2, s*0.15, 0, Math.PI*2); ctx.fill();
+        var iotR = s*0.55;
+        for (var io = 0; io < 5; io++) {
+          var ang = -Math.PI/2 + (io-2)*0.6;
+          ctx.fillStyle = 'rgba(255,255,255,0.15)';
+          ctx.beginPath();
+          ctx.arc(Math.cos(ang)*iotR, -s*0.2 + Math.sin(ang)*iotR, s*0.05, 0, Math.PI*2);
+          ctx.fill();
+        }
+      } else if (name === 'security') {
+        ctx.beginPath();
+        ctx.moveTo(0, -s*0.95);
+        ctx.lineTo(-s*0.85, -s*0.5);
+        ctx.lineTo(-s*0.85, s*0.2);
+        ctx.lineTo(0, s*0.9);
+        ctx.lineTo(s*0.85, s*0.2);
+        ctx.lineTo(s*0.85, -s*0.5);
+        ctx.closePath(); ctx.stroke();
+        ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(s*0.3, -s*0.3);
+        ctx.moveTo(0, 0); ctx.lineTo(-s*0.2, s*0.1);
+        ctx.stroke();
+      } else if (name === 'wifi') {
+        ctx.beginPath(); ctx.arc(-s*0.3, 0, s*0.3, 0, Math.PI*2); ctx.stroke();
+        ctx.strokeRect(s*0.15, -s*0.2, s*0.7, s*0.4);
+        ctx.beginPath();
+        ctx.moveTo(-s*0.3, -s*0.7);
+        ctx.lineTo(-s*0.3, -s*0.9);
+        ctx.stroke();
+        for (var wf = 0; wf < 2; wf++) {
+          ctx.fillStyle = 'rgba(255,255,255,0.08)';
+          ctx.fillRect(s*0.25, -s*0.12 + wf * s*0.24, s*0.5, s*0.15);
+        }
+      } else if (name === 'surveillance') {
+        ctx.beginPath(); ctx.arc(0, -s*0.15, s*0.5, 0, Math.PI*2); ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(-s*0.65, s*0.4); ctx.quadraticCurveTo(0, s*0.85, s*0.65, s*0.4);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(255,255,255,0.08)';
+        ctx.beginPath(); ctx.arc(0, -s*0.15, s*0.2, 0, Math.PI*2); ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    return canvas.toDataURL();
   }
 
   // 加载执行
