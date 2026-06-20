@@ -12,6 +12,7 @@
     "version": "8.1.2"
   },
   "dependencies": {
+    "@mermaid-js/mermaid-cli": "^11.15.0",
     "hexo": "^8.0.0",
     "hexo-filter-nofollow": "^2.0.2",
     "hexo-generator-archive": "^2.0.0",

@@ -1,0 +1,43 @@
+graph TB
+    subgraph INTERNET["🌐 INTERNET"]
+        ISP(("ISP 光猫"))
+    end
+
+    subgraph FW["H3C F1000-T200 防火墙"]
+        GE1["GE1/0/1 WAN 桥接"]
+        GE2["GE1/0/2 LAN 桥接"]
+        GE3["GE1/0/3 DMZ"]
+        MGMT["管理IP: 192.168.100.254"]
+    end
+
+    subgraph SR["软路由 192.168.100.1"]
+        SR_WAN["WAN ← 从ISP获取IP"]
+        SR_LAN["LAN: 192.168.100.1"]
+    end
+
+    subgraph R2["路由器"]
+        R2_WAN["WAN: 192.168.100.2"]
+        R2_LAN["LAN: 192.168.1.1"]
+    end
+
+    subgraph LAN["📡 内网 192.168.1.0/24"]
+        SW["交换机 192.168.1.12"]
+        PC["💻 电脑 192.168.1.5"]
+        OTHER["📱 其他设备"]
+    end
+
+    subgraph DMZ["🖥️ DMZ 服务器区 10.0.2.0/24"]
+        DMZ_SW["DMZ 交换机"]
+        R730xd["Dell R730xd<br/>ESXi 10.0.2.252"]
+        VM["虚拟机 10.0.2.11"]
+    end
+
+    ISP -->|"WAN"| GE1
+    GE2 -->|"透明桥接"| SR_WAN
+    SR_LAN -->|"192.168.100.0/24"| R2_WAN
+    R2_LAN -->|"192.168.1.0/24"| SW
+    SW --- PC
+    SW --- OTHER
+    GE3 -->|"独立接口"| DMZ_SW
+    DMZ_SW --- R730xd
+    R730xd --- VM

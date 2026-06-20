@@ -245,3 +245,9 @@ pace:
   color: '#49B1F5'
   # See: https://codebyzach.github.io/pace/
   type: 'pace-bar'
+
+# CDN 资源
+CDN:
+  third_party_provider: jsdelivr
+  option:
+    mermaid: https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js
