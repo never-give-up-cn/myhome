@@ -8,6 +8,11 @@ tags:
   - 观点
 categories:
   - 器材评测
+photos:
+  - /img/posts/night-photo.svg
+  - /img/photos/IMG_4967.jpg
+  - /img/photos/IMG_4956.jpg
+---
 ---
 
 {% img /img/posts/night-photo.svg '"夜景长曝光摄影" "摄影器材"' %}

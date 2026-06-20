@@ -8,6 +8,10 @@ tags:
   - 架构
 categories:
   - 技术笔记
+photos:
+  - /img/server-rack.jpg
+  - /img/cover.jpg
+---
 ---
 
 经常有人问：自己买台服务器放在家里或者租个机房，对外提供网站服务，是不是比买云服务器划算？

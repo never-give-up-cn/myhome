@@ -8,6 +8,10 @@ tags:
   - 配置
 categories:
   - 技术笔记
+photos:
+  - /img/server-rack.jpg
+  - /img/topo-full.png
+---
 ---
 
 2026年6月20日，通过 Console（COM5）连接 H3C F1000-T200 防火墙并完成初始配置。以下是配置过程记录和当前状态。

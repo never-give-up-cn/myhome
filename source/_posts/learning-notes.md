@@ -7,6 +7,11 @@ tags:
   - 风光摄影
 categories:
   - 摄影教程
+photos:
+  - /img/posts/macro.svg
+  - /img/photos/IMG_4933.jpg
+  - /img/photos/IMG_4946.jpg
+  - /img/photos/IMG_4924.jpg
 ---
 
 {% img /img/posts/macro.svg '"从取景器里看到的世界" "摄影构图"' %}
