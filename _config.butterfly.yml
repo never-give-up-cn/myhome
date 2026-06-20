@@ -197,3 +197,51 @@ wordcount:
   post_wordcount: true
   min2read: true
   total_wordcount: true
+
+# ========== 有趣的功能 ==========
+
+# Busuanzi 访问统计
+busuanzi:
+  site_uv: true
+  site_pv: true
+  page_pv: true
+
+# 背景粒子网络（鼠标移动会连接线条）
+canvas_nest:
+  enable: true
+  color: '49, 177, 245'
+  opacity: 0.5
+  zIndex: -1
+  count: 99
+  mobile: true
+
+# 鼠标点击 - 爱心效果 ❤️
+click_heart:
+  enable: true
+  mobile: true
+
+# 鼠标点击 - 烟花效果 🎆
+fireworks:
+  enable: true
+  zIndex: 9999
+  mobile: true
+
+# 打字震动效果（激活电源模式）
+activate_power_mode:
+  enable: false
+
+# 页面进入过渡动画
+enter_transitions: true
+
+# 加载进度条
+preloader:
+  enable: true
+  source: 1
+
+# 页面顶部加载动画进度条
+pace:
+  enable: true
+  # 彩虹色进度条
+  color: '#49B1F5'
+  # See: https://codebyzach.github.io/pace/
+  type: 'pace-bar'

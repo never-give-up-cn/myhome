@@ -83,3 +83,16 @@ theme: butterfly
 # Deployment
 deploy:
   type: ''
+
+# Sitemap
+sitemap:
+  path: sitemap.xml
+
+baidusitemap:
+  path: baidusitemap.xml
+
+# External link nofollow
+nofollow:
+  enable: true
+  exclude:
+    - https://github.com/never-give-up-cn
