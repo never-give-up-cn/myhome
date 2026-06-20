@@ -34,8 +34,8 @@ iconlib:
 
 # Navigation Menu
 menu:
-  首页:
-    - /
+  封面:
+    - /cover/
     - icon-home
   作品集:
     - /photos/
