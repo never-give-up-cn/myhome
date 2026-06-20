@@ -152,3 +152,7 @@ color:
 # 自定义 CSS
 custom_css:
   - /css/custom.css
+
+# 自定义 JS
+custom_js:
+  - /js/random-cover.js
