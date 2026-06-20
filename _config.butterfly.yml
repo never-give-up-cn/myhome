@@ -188,8 +188,13 @@ pjax:
 snackbar:
   enable: true
 
-# Lightbox
-lightbox: fancybox
+# Mermaid 图表
+mermaid:
+  enable: true
+  code_write: true
+  theme:
+    light: default
+    dark: dark
 
 # wordcount
 wordcount:
