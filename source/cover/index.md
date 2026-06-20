@@ -5,7 +5,8 @@ comments: false
 ---
 
 <div class="cover-page">
-  <div class="cover-bg"></div>
+  <div class="cover-split cover-left"></div>
+  <div class="cover-split cover-right"></div>
   <div class="cover-overlay"></div>
   <div class="cover-content">
     <div class="cover-title">
@@ -54,15 +55,23 @@ comments: false
   z-index: 100;
 }
 
-/* Single full-screen background image */
-.cover-bg {
+/* Diagonal split background images */
+.cover-split {
   position: absolute;
   top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  background: url(/img/cover.jpg) center center / cover no-repeat;
   z-index: 1;
+}
+.cover-left {
+  left: 0;
+  background: url(/img/cover.jpg) center center / cover no-repeat;
+  clip-path: polygon(0 0, 60% 0, 40% 100%, 0 100%);
+}
+.cover-right {
+  right: 0;
+  background: url(/img/server-rack.jpg) center center / cover no-repeat;
+  clip-path: polygon(60% 0, 100% 0, 100% 100%, 40% 100%);
 }
 
 /* Dark overlay for text readability */
