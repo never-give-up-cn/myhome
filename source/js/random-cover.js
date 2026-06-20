@@ -54,9 +54,22 @@
     }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', randomizeCovers);
-  } else {
-    randomizeCovers();
+  function initRandomCover() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', randomizeCovers);
+    } else {
+      randomizeCovers();
+    }
+  }
+
+  // 首次加载
+  initRandomCover();
+
+  // PJAX 翻页后重新随机
+  document.addEventListener('pjax:complete', randomizeCovers);
+
+  // Butterfly 主题的全局函数注册
+  if (typeof btf !== 'undefined' && btf.addGlobalFn) {
+    btf.addGlobalFn('pjaxComplete', randomizeCovers, 'randomCover');
   }
 })();
