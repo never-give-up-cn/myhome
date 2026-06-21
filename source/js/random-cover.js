@@ -51,12 +51,30 @@
     var count = 0;
 
     cards.forEach(function(card) {
-      var link = card.querySelector('a');
       var img = card.querySelector('img.post-bg');
-      if (!link || !img) return;
+      if (!img) return;
+
+      // 优先使用 data-photos 属性（主题已内联在 HTML 中）
+      if (img.dataset.photos) {
+        try {
+          var photos = JSON.parse(img.dataset.photos);
+          if (photos && photos.length > 0) {
+            applyCover(img, photos);
+            count++;
+            if (count === cards.length) processing = false;
+            return;
+          }
+        } catch(e) {
+          // fallback
+        }
+      }
+
+      // data-photos 为空时尝试 XHR 抓取
+      var link = card.querySelector('a');
+      if (!link) { count++; if (count === cards.length) processing = false; return; }
 
       var href = link.getAttribute('href');
-      if (!href) return;
+      if (!href) { count++; if (count === cards.length) processing = false; return; }
 
       var fullUrl = href.startsWith('http') ? href : window.location.origin + href;
 
