@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0c29"/>
+      <stop offset="50%" style="stop-color:#1a1a3e"/>
+      <stop offset="100%" style="stop-color:#24243e"/>
+    </linearGradient>
+    <linearGradient id="gate1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+    <linearGradient id="gate2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f093fb"/>
+      <stop offset="100%" style="stop-color:#f5576c"/>
+    </linearGradient>
+    <linearGradient id="gate3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe"/>
+      <stop offset="100%" style="stop-color:#00f2fe"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="800" height="500" fill="url(#bg)"/>
+
+  <!-- Grid lines -->
+  <g opacity="0.03" stroke="#fff" stroke-width="0.5">
+    <line x1="0" y1="100" x2="800" y2="100"/>
+    <line x1="0" y1="200" x2="800" y2="200"/>
+    <line x1="0" y1="300" x2="800" y2="300"/>
+    <line x1="0" y1="400" x2="800" y2="400"/>
+    <line x1="200" y1="0" x2="200" y2="500"/>
+    <line x1="400" y1="0" x2="400" y2="500"/>
+    <line x1="600" y1="0" x2="600" y2="500"/>
+  </g>
+
+  <!-- Title -->
+  <text x="400" y="55" font-family="'Courier New', monospace" font-size="22" fill="#e0e0ff" text-anchor="middle" font-weight="bold" filter="url(#glow)">Claude Code 三层门禁系统</text>
+  <text x="400" y="80" font-family="'Courier New', monospace" font-size="13" fill="#8888aa" text-anchor="middle">Three-Tier Gating Architecture</text>
+
+  <!-- Arrow flow -->
+  <g stroke="#667eea" stroke-width="1.5" fill="none" opacity="0.5">
+    <path d="M 120,160 C 200,160 200,200 280,200"/>
+    <path d="M 120,200 C 200,200 200,340 280,340"/>
+    <path d="M 120,340 C 200,340 200,160 280,160"/>
+  </g>
+
+  <!-- Layer 1: Build-time -->
+  <g transform="translate(80, 140)">
+    <rect x="0" y="0" width="150" height="80" rx="12" fill="url(#gate1)" opacity="0.9"/>
+    <rect x="0" y="0" width="5" height="80" rx="3" fill="#fff" opacity="0.3"/>
+    <text x="75" y="30" font-family="'Courier New', monospace" font-size="11" fill="#fff" text-anchor="middle" font-weight="bold">LAYER 1</text>
+    <text x="75" y="48" font-family="'Courier New', monospace" font-size="10" fill="#d0d0ff" text-anchor="middle">构建时</text>
+    <text x="75" y="65" font-family="'Courier New', monospace" font-size="9" fill="#b0b0dd" text-anchor="middle">feature() 编译宏</text>
+  </g>
+
+  <!-- Arrow: Layer 1 → Layer 2 -->
+  <g>
+    <line x1="230" y1="180" x2="290" y2="180" stroke="#667eea" stroke-width="2" marker-end="url(#arrow)"/>
+    <polygon points="288,174 300,180 288,186" fill="#667eea"/>
+  </g>
+
+  <!-- Layer 2: GrowthBook -->
+  <g transform="translate(310, 140)">
+    <rect x="0" y="0" width="170" height="80" rx="12" fill="url(#gate2)" opacity="0.9"/>
+    <rect x="0" y="0" width="5" height="80" rx="3" fill="#fff" opacity="0.3"/>
+    <text x="85" y="30" font-family="'Courier New', monospace" font-size="11" fill="#fff" text-anchor="middle" font-weight="bold">LAYER 2</text>
+    <text x="85" y="48" font-family="'Courier New', monospace" font-size="10" fill="#ffe0f0" text-anchor="middle">运行时 A/B 测试</text>
+    <text x="85" y="65" font-family="'Courier New', monospace" font-size="9" fill="#f0b0d0" text-anchor="middle">500+ tengu_* 标记</text>
+  </g>
+
+  <!-- Arrow: Layer 2 → Layer 3 -->
+  <g>
+    <line x1="480" y1="180" x2="540" y2="180" stroke="#f5576c" stroke-width="2"/>
+    <polygon points="538,174 550,180 538,186" fill="#f5576c"/>
+  </g>
+
+  <!-- Layer 3: Identity -->
+  <g transform="translate(560, 140)">
+    <rect x="0" y="0" width="150" height="80" rx="12" fill="url(#gate3)" opacity="0.9"/>
+    <rect x="0" y="0" width="5" height="80" rx="3" fill="#fff" opacity="0.3"/>
+    <text x="75" y="30" font-family="'Courier New', monospace" font-size="11" fill="#fff" text-anchor="middle" font-weight="bold">LAYER 3</text>
+    <text x="75" y="48" font-family="'Courier New', monospace" font-size="10" fill="#d0f0ff" text-anchor="middle">身份门控</text>
+    <text x="75" y="65" font-family="'Courier New', monospace" font-size="9" fill="#a0d0ee" text-anchor="middle">USER_TYPE 常量</text>
+  </g>
+
+  <!-- Decision flow -->
+  <g transform="translate(310, 280)">
+    <text x="0" y="0" font-family="'Courier New', monospace" font-size="11" fill="#8888aa" text-anchor="middle">决策流程</text>
+    <text x="0" y="20" font-family="'Courier New', monospace" font-size="10" fill="#6666aa" text-anchor="middle">编译时决定 → 运行时动态 → 身份验证</text>
+  </g>
+
+  <!-- Stats cards -->
+  <g transform="translate(60, 350)">
+    <rect x="0" y="0" width="200" height="90" rx="8" fill="#1a1a3e" stroke="#667eea" stroke-width="0.5" opacity="0.8"/>
+    <text x="100" y="25" font-family="'Courier New', monospace" font-size="14" fill="#667eea" text-anchor="middle" font-weight="bold">88+</text>
+    <text x="100" y="45" font-family="'Courier New', monospace" font-size="10" fill="#8888bb" text-anchor="middle">构建时 Feature Flags</text>
+    <line x1="20" y1="55" x2="180" y2="55" stroke="#333366" stroke-width="0.5"/>
+    <text x="100" y="72" font-family="'Courier New', monospace" font-size="9" fill="#6666aa" text-anchor="middle">编译期死代码消除</text>
+  </g>
+
+  <g transform="translate(300, 350)">
+    <rect x="0" y="0" width="200" height="90" rx="8" fill="#1a1a3e" stroke="#f5576c" stroke-width="0.5" opacity="0.8"/>
+    <text x="100" y="25" font-family="'Courier New', monospace" font-size="14" fill="#f093fb" text-anchor="middle" font-weight="bold">500+</text>
+    <text x="100" y="45" font-family="'Courier New', monospace" font-size="10" fill="#8888bb" text-anchor="middle">运行时 A/B 标记</text>
+    <line x1="20" y1="55" x2="180" y2="55" stroke="#333366" stroke-width="0.5"/>
+    <text x="100" y="72" font-family="'Courier New', monospace" font-size="9" fill="#6666aa" text-anchor="middle">按用户/设备/组织定向</text>
+  </g>
+
+  <g transform="translate(540, 350)">
+    <rect x="0" y="0" width="200" height="90" rx="8" fill="#1a1a3e" stroke="#4facfe" stroke-width="0.5" opacity="0.8"/>
+    <text x="100" y="25" font-family="'Courier New', monospace" font-size="14" fill="#4facfe" text-anchor="middle" font-weight="bold">60+</text>
+    <text x="100" y="45" font-family="'Courier New', monospace" font-size="10" fill="#8888bb" text-anchor="middle">身份门控点</text>
+    <line x1="20" y1="55" x2="180" y2="55" stroke="#333366" stroke-width="0.5"/>
+    <text x="100" y="72" font-family="'Courier New', monospace" font-size="9" fill="#6666aa" text-anchor="middle">ant vs external</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="400" y="488" font-family="'Courier New', monospace" font-size="9" fill="#444466" text-anchor="middle">Breaking the Iceberg · 揭秘隐藏功能</text>
+</svg>

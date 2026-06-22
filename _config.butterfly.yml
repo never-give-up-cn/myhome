@@ -188,7 +188,8 @@ pjax:
 snackbar:
   enable: true
 
-# Mermaid 图表
+# 图片点击全屏显示（medium_zoom / fancybox / 留空则不启用）
+lightbox: medium_zoom
 mermaid:
   enable: true
   code_write: true

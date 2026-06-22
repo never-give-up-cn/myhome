@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d1b2a"/>
+      <stop offset="50%" style="stop-color:#1b2838"/>
+      <stop offset="100%" style="stop-color:#1a1a2e"/>
+    </linearGradient>
+    <linearGradient id="grid" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:0.15"/>
+      <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:0.05"/>
+    </linearGradient>
+    <linearGradient id="neon1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe"/>
+      <stop offset="100%" style="stop-color:#00f2fe"/>
+    </linearGradient>
+    <linearGradient id="neon2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f093fb"/>
+      <stop offset="100%" style="stop-color:#f5576c"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowStrong">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="500" fill="url(#bg)"/>
+
+  <!-- Grid overlay (city map feel) -->
+  <g opacity="0.08">
+    <pattern id="citygrid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <rect width="40" height="40" fill="none"/>
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#4facfe" stroke-width="0.5"/>
+    </pattern>
+    <rect width="800" height="500" fill="url(#citygrid)"/>
+  </g>
+
+  <!-- Smallville title -->
+  <text x="400" y="65" font-family="'Courier New', monospace" font-size="28" fill="#4facfe" text-anchor="middle" font-weight="bold" filter="url(#glow)">SMALLVILLE</text>
+  <text x="400" y="90" font-family="'Courier New', monospace" font-size="13" fill="#6688aa" text-anchor="middle">交互式人类行为模拟小镇</text>
+
+  <!-- Agent dots on map (circles representing agents) -->
+  <g filter="url(#glow)">
+    <!-- Agent 1 - moving right -->
+    <circle cx="120" cy="180" r="6" fill="#4facfe" opacity="0.9"/>
+    <line x1="120" y1="180" x2="155" y2="195" stroke="#4facfe" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.5"/>
+
+    <!-- Agent 2 -->
+    <circle cx="350" cy="150" r="5" fill="#00f2fe" opacity="0.9"/>
+    <line x1="350" y1="150" x2="380" y2="170" stroke="#00f2fe" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.5"/>
+
+    <!-- Agent 3 -->
+    <circle cx="550" cy="200" r="5" fill="#4facfe" opacity="0.9"/>
+
+    <!-- Agent 4 -->
+    <circle cx="200" cy="280" r="5" fill="#f093fb" opacity="0.9"/>
+
+    <!-- Agent 5 -->
+    <circle cx="650" cy="300" r="5" fill="#f5576c" opacity="0.9"/>
+
+    <!-- Agent 6 -->
+    <circle cx="450" cy="350" r="5" fill="#4facfe" opacity="0.7"/>
+
+    <!-- Agent 7 -->
+    <circle cx="300" cy="380" r="4" fill="#00f2fe" opacity="0.8"/>
+
+    <!-- Agent 8 -->
+    <circle cx="150" cy="350" r="4" fill="#f093fb" opacity="0.7"/>
+
+    <!-- Connection lines between nearby agents (social interactions) -->
+    <g stroke-width="1" opacity="0.3">
+      <line x1="350" y1="150" x2="550" y2="200" stroke="#4facfe" stroke-dasharray="4,6"/>
+      <line x1="200" y1="280" x2="300" y2="380" stroke="#f093fb" stroke-dasharray="4,6"/>
+      <line x1="550" y1="200" x2="650" y2="300" stroke="#f5576c" stroke-dasharray="4,6"/>
+      <line x1="120" y1="180" x2="200" y2="280" stroke="#4facfe" stroke-dasharray="4,6"/>
+      <line x1="350" y1="150" x2="450" y2="350" stroke="#00f2fe" stroke-dasharray="4,6"/>
+    </g>
+  </g>
+
+  <!-- Buildings (simple rects) -->
+  <g fill="none" stroke="#334455" stroke-width="1" opacity="0.6">
+    <!-- Café -->
+    <rect x="320" y="220" width="80" height="60" rx="3"/>
+    <text x="360" y="255" font-family="'Courier New', monospace" font-size="8" fill="#556677" text-anchor="middle">咖啡馆</text>
+
+    <!-- University -->
+    <rect x="500" y="120" width="70" height="50" rx="3"/>
+    <text x="535" y="148" font-family="'Courier New', monospace" font-size="8" fill="#556677" text-anchor="middle">大学</text>
+
+    <!-- Houses -->
+    <rect x="100" y="120" width="50" height="40" rx="2"/>
+    <rect x="190" y="320" width="50" height="40" rx="2"/>
+    <rect x="420" y="300" width="50" height="40" rx="2"/>
+    <rect x="580" y="260" width="50" height="40" rx="2"/>
+    <rect x="250" y="400" width="50" height="40" rx="2"/>
+    <rect x="520" y="380" width="50" height="40" rx="2"/>
+
+    <!-- Park -->
+    <ellipse cx="680" cy="180" rx="45" ry="35" stroke="#446654"/>
+    <text x="680" y="185" font-family="'Courier New', monospace" font-size="8" fill="#446654" text-anchor="middle">公园</text>
+
+    <!-- Shop -->
+    <rect x="80" y="270" width="55" height="40" rx="2"/>
+  </g>
+
+  <!-- Roads -->
+  <g stroke="#2a3a4a" stroke-width="2" opacity="0.4">
+    <line x1="0" y1="200" x2="300" y2="200"/>
+    <line x1="180" y1="100" x2="180" y2="360"/>
+    <line x1="400" y1="180" x2="400" y2="380"/>
+    <line x1="60" y1="320" x2="350" y2="320"/>
+    <line x1="500" y1="170" x2="800" y2="170"/>
+    <line x1="260" y1="360" x2="600" y2="360"/>
+  </g>
+
+  <!-- Bottom info cards -->
+  <g transform="translate(50, 430)">
+    <rect x="0" y="0" width="700" height="55" rx="6" fill="#0d1b2a" stroke="#1a3050" stroke-width="0.5" opacity="0.9"/>
+
+    <circle cx="25" cy="28" r="4" fill="#4facfe" filter="url(#glow)"/>
+    <text x="37" y="32" font-family="'Courier New', monospace" font-size="9" fill="#7799bb">25 个智能体</text>
+
+    <circle cx="155" cy="28" r="4" fill="#f093fb" filter="url(#glow)"/>
+    <text x="167" y="32" font-family="'Courier New', monospace" font-size="9" fill="#7799bb">记忆流 + 反思 + 规划</text>
+
+    <circle cx="315" cy="28" r="4" fill="#00f2fe" filter="url(#glow)"/>
+    <text x="327" y="32" font-family="'Courier New', monospace" font-size="9" fill="#7799bb">涌现社会行为</text>
+
+    <circle cx="445" cy="28" r="4" fill="#f5576c" filter="url(#glow)"/>
+    <text x="457" y="32" font-family="'Courier New', monospace" font-size="9" fill="#7799bb">OpenAI API 驱动</text>
+
+    <line x1="540" y1="10" x2="540" y2="45" stroke="#1a3050" stroke-width="0.5"/>
+    <text x="620" y="32" font-family="'Courier New', monospace" font-size="9" fill="#445566" text-anchor="middle">⭐ 21.6k</text>
+  </g>
+</svg>
