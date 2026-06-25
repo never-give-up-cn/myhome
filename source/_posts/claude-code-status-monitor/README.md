@@ -226,40 +226,52 @@ python gui.py
 ## 踩坑记录
 
 ### 1. Python 2/3 混装
-系统同时有 Python 2.7 和 3.13，`python` 指向 2.7 导致 f-string 崩溃。修复：用 `py -3` launcher 优先检测。
+系统同时有 Python 2.7 和 3.13，`python` 指向 2.7 导致 f-string 崩溃。  
+**解决**：`start.bat` 用三步检测链：`py -3` → `python3` → `python` + 版本检查，确保跑在 3.7+。窗口模式用 `pyw -3` 或 `pythonw.exe` 隐藏控制台。
 
 ### 2. 子进程枚举竞态
-遍历子进程时进程刚好退出，`psutil.NoSuchProcess` 导致监控器崩溃。修复：每个进程单独 `try/except`。
+遍历子进程时刚好退出，`psutil.NoSuchProcess` 导致崩溃。  
+**解决**：不用生成器表达式，改 `for` 循环 + 每个子进程单独 `try/except` 跳过已退出的。
 
 ### 3. PowerShell 超时弹窗
-GPU 检测用 `-Command` 模式会超时并闪 PowerShell 窗口。修复：改临时文件用 `-File` 模式，加 `CREATE_NO_WINDOW`。
+GPU 检测用 `-Command` 模式会超时并闪 PowerShell 窗口。  
+**解决**：写临时 `.ps1` 文件用 `-File` 模式执行，加 `CREATE_NO_WINDOW` 标志隐藏窗口，超时设 3 秒。
 
 ### 4. 右键卡死
-菜单每次重建 + GPU 检测阻塞主线程。修复：菜单预缓存，数据采集移到后台线程。
+菜单每次重建 + GPU 检测阻塞主线程。  
+**解决**：菜单 `__init__` 预构建缓存，GPU 数据采集移到 `threading.Thread` 后台守护线程，UI 只读缓存。
 
 ### 5. 悬浮窗起不来
-`menu.index(None)` 抛 Tcl 异常。修复：直接用标签名查找。
+`menu.index(None)` 抛 Tcl 异常。  
+**解决**：不存 index，直接用 `entryconfig("标签名")` 按标签操作。
 
 ### 6. 吸附后不会隐藏
-`_on_leave` 条件判断错误，展开后 `_hidden_mode=False` 导致直接返回。修复：去掉该检查。
+`_on_leave` 条件 `_hidden_mode=False` 时直接返回，不启动隐藏。  
+**解决**：去掉 `_hidden_mode` 检查，吸附状态下一律启动 1.5s 隐藏定时器。
 
 ### 7. 8 位颜色码崩溃
-Tkinter 不支持 `#ffffff18` 等带透明度的颜色。修复：全用 6 位纯色。
+Tkinter 不支持 `#ffffff18` 等带透明度的颜色。  
+**解决**：全用 6 位纯色，分割线 `#334455`，阴影用偏移矩形 `#080a10` 模拟。
 
 ### 8. 文件编码损坏
-PowerShell 写中文文件乱码。修复：全程用 Python 读写。
+PowerShell `Set-Content` 默认 ANSI 编码，中文全变乱码。  
+**解决**：不用 PowerShell 写 Python 文件，统一用 Python `open(write, encoding="utf-8")`。
 
 ### 9. AMD GPU 检测不到
-只写了 nvidia-smi，用户是 AMD RX 6750 XT。修复：加 Windows 性能计数器 + 注册表双重回退。
+只写了 nvidia-smi，用户是 AMD RX 6750 XT。  
+**解决**：三层检测链：`nvidia-smi` → PowerShell `Get-Counter`（Windows 通用）→ WMI `Win32_VideoController`。
 
 ### 10. 显存读错
-WMI 报告 4GB 实际 12GB。修复：从注册表 `qwMemorySize` 读取。
+WMI 报告 4GB 实际 12GB，`AdapterRAM` 不准确。  
+**解决**：从注册表 `HardwareInformation.qwMemorySize` 读取，值以字节为单位，除以 1GB 得准确显存。
 
 ### 11. 自定义标题栏问题
-`overrideredirect` 移除了原生标题栏也失去了任务栏行为。修复：手动实现最小化/托盘。
+`overrideredirect` 移除了原生标题栏也失去了任务栏行为。  
+**解决**：手动实现 `─` 最小化 / `—` 托盘 / `×` 退出三个按钮，标题栏绑定拖拽。Tkinter 调用用 `after(0, callback)` 确保主线程执行。
 
 ### 12. 按钮溢出
-7 个按钮总宽超窗口，反复调宽度 520→560→640。修复：`padx=10` + 9px 字体。
+7 个按钮总宽超窗口，反复调宽度 520→560→640。  
+**解决**：按钮字体 10→9px，内边距 20→10，窗口稳定在 640px，`pack(side=RIGHT)` 从右到左排列。
 
 ## 配置项
 
