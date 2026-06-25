@@ -223,6 +223,44 @@ python gui.py
 
 自定义深色标题栏，布局重构为区块化卡片。统一科技暗色配色方案，进度条辅助显示，按钮 hover 动效。
 
+## 踩坑记录
+
+### 1. Python 2/3 混装
+系统同时有 Python 2.7 和 3.13，`python` 指向 2.7 导致 f-string 崩溃。修复：用 `py -3` launcher 优先检测。
+
+### 2. 子进程枚举竞态
+遍历子进程时进程刚好退出，`psutil.NoSuchProcess` 导致监控器崩溃。修复：每个进程单独 `try/except`。
+
+### 3. PowerShell 超时弹窗
+GPU 检测用 `-Command` 模式会超时并闪 PowerShell 窗口。修复：改临时文件用 `-File` 模式，加 `CREATE_NO_WINDOW`。
+
+### 4. 右键卡死
+菜单每次重建 + GPU 检测阻塞主线程。修复：菜单预缓存，数据采集移到后台线程。
+
+### 5. 悬浮窗起不来
+`menu.index(None)` 抛 Tcl 异常。修复：直接用标签名查找。
+
+### 6. 吸附后不会隐藏
+`_on_leave` 条件判断错误，展开后 `_hidden_mode=False` 导致直接返回。修复：去掉该检查。
+
+### 7. 8 位颜色码崩溃
+Tkinter 不支持 `#ffffff18` 等带透明度的颜色。修复：全用 6 位纯色。
+
+### 8. 文件编码损坏
+PowerShell 写中文文件乱码。修复：全程用 Python 读写。
+
+### 9. AMD GPU 检测不到
+只写了 nvidia-smi，用户是 AMD RX 6750 XT。修复：加 Windows 性能计数器 + 注册表双重回退。
+
+### 10. 显存读错
+WMI 报告 4GB 实际 12GB。修复：从注册表 `qwMemorySize` 读取。
+
+### 11. 自定义标题栏问题
+`overrideredirect` 移除了原生标题栏也失去了任务栏行为。修复：手动实现最小化/托盘。
+
+### 12. 按钮溢出
+7 个按钮总宽超窗口，反复调宽度 520→560→640。修复：`padx=10` + 9px 字体。
+
 ## 配置项
 
 在 `gui.py` 或 `monitor.py` 开头的 `CONFIG` 字典中调整：
